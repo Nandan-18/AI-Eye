@@ -1,0 +1,4 @@
+pygame
+openai
+python-dotenv
+replicate

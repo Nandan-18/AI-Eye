@@ -1,1 +1,8 @@
 stability-sdk/
+.env
+venv/
+.venv/
+__pycache__/
+/record.log
+Makefile
+temp/

@@ -5,7 +5,7 @@ import sys
 class Game:
     def __init__(self) -> None:
         pg.init()
-        self.win = pg.display.set_mode(size=(500,500))
+        self.win = pg.display.set_mode(size=(1000,500))
         self.clock = pg.time.Clock()
 
         self.fps = 60

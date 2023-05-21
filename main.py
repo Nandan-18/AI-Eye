@@ -153,8 +153,8 @@ class Game:
         )
 
     def run(self):
-        self.main_menu()
         self.load()
+        self.main_menu()
 
         while True:
             self.update()

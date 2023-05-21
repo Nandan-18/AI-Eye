@@ -16,6 +16,8 @@ class Game:
 
         self.playing = False
 
+        self.click = pg.mixer.Sound("sounds/Click.mp3")
+
 
     def load(self):
             if  self.playing == False:
@@ -49,6 +51,7 @@ class Game:
 
         #load main game
         if self.button.clicked and self.playing == False:
+            self.click.play()
             self.playing = True
             self.load()
         

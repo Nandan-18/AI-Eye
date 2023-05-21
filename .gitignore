@@ -7,3 +7,4 @@ __pycache__/
 Makefile
 temp/
 text_input_reference.png
+.vs/

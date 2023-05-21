@@ -2,6 +2,3 @@ pygame
 openai
 python-dotenv
 replicate
-requests
-httpx
-loguru

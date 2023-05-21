@@ -5,7 +5,7 @@ import logging
 from scripts import ui
 import os
 from scripts import dialogue, ui, progress_bar, scoring
-from clients.stable_diffusion import stable_diffusion_client
+from clients import stable_diffusion
 from clients import utils
 import asyncio
 

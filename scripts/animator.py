@@ -28,7 +28,8 @@ class Animator:
         self.cur_state = state
 
     def get_frame(self):
-        return self.images[self.cur_state][self.img_frame]
+        
+        return self.images[self.cur_state][self.img_frame  % len(self.images[self.cur_state])]
     
     def get_size(self):
         return self.images[self.cur_state][self.img_frame].get_size()

@@ -4,14 +4,13 @@ import sys
 import logging
 import os
 from scripts import entities, dialogue, ui, progress_bar, scoring
-from clients import stable_diffusion
+from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
 from loguru import logger
 
 
 class Game:
     def __init__(self) -> None:
-        pg.mixer.pre_init(16000, -16, 2, 2048)
         pg.init()
         info = pg.display.Info()
         w = info.current_w
@@ -27,7 +26,6 @@ class Game:
 
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
-        self.right_answer = pg.mixer.Sound("sounds/GoodAnswerDing.mp3")
 
         # Create an instance of the Score class
         self.score = scoring.Score(1)
@@ -97,6 +95,8 @@ class Game:
         self.clock.tick(self.fps)
         mouse_pos = pg.mouse.get_pos()
         mouse_buttons = pg.mouse.get_pressed()
+        
+
         events = pg.event.get()
         for event in events:
             if event.type == pg.QUIT:
@@ -145,17 +145,20 @@ class Game:
         self.win.fill((0, 200, 200))
         self.text_input.draw(self.win)
         self.dialogue_sys.draw(self.win)
+        self.score.draw(self.win)  # Draw the score
+        self.win.blit(pg.transform.scale(
+            self.image,
+            tuple(stable_diffusion_client.image_dimensions)),
+            (self.win.get_width()/2 - self.image.get_width()//2, self.win.get_height()/3 - self.image.get_height()//2),
+        )
 
     def run(self):
+        self.main_menu()
         self.load()
 
         while True:
             self.update()
-
-            if self.playing == False:
-                self.draw_start_screen()
-            if self.playing == True:
-                self.draw()
+            self.draw()
 
     def quit(self):
         pg.quit()

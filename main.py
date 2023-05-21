@@ -37,7 +37,7 @@ class Game:
                 pg.mixer.music.load('sounds/Suspense.mp3')
                 pg.mixer.music.play(-1)
 
-        self.dialogue_sys = dialouge.DialougeSystem()
+            self.dialogue_sys = dialouge.DialougeSystem()
 
 
     def update(self):

@@ -3,15 +3,24 @@ import pygame as pg
 import sys
 import logging
 from scripts import ui
+import os
+from scripts import ui, dialouge
+from clients.stable_diffusion import stable_diffusion_client
+from clients import utils
+import asyncio
 
 class Game:
     def __init__(self) -> None:
         pg.mixer.pre_init(16000, -16, 2, 2048)
         pg.init()
-        self.win = pg.display.set_mode(size=(1000,500))
+        info = pg.display.Info()
+        w = info.current_w
+        h = info.current_h
+        os.environ["SDL_VIDEO_CENTERED"] = '1'
+        self.win  = pg.display.set_mode((w, h-30), pg.RESIZABLE)
         self.clock = pg.time.Clock()
-
         self.fps = 60
+
 
         pg.display.set_caption("Game")
 
@@ -26,9 +35,9 @@ class Game:
         
             self.mute_button = ui.Button((800, 10), (100, 50),"Mute")
 
-            if  self.playing == False:
-                self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-                self.button = ui.Button((275,200), (400, 50),"Start")
+        if  self.playing == False:
+            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+            self.button = ui.Button((275,200), (400, 50),"Start")
 
                 pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
                 pg.mixer.music.play(-1)
@@ -40,6 +49,8 @@ class Game:
                 pg.mixer.music.load('sounds/Suspense.mp3')
                 pg.mixer.music.play(-1)
 
+        self.dialogue_sys = dialouge.DialougeSystem()
+
 
     def update(self):
         pg.display.update()
@@ -48,12 +59,16 @@ class Game:
         mouse_buttons = pg.mouse.get_pressed()
         events = pg.event.get()
         for event in events:
+            if event.type == pg.VIDEORESIZE:
+                self.win = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
 
+            
             if event.type == pg.QUIT:
                 self.quit()
                 
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
+        self.dialogue_sys.update(events)
         self.mute_button.update(mouse_buttons, mouse_pos)
 
         if self.text_input.shake == 30:
@@ -74,8 +89,13 @@ class Game:
         
     
     def draw(self):
-        self.win.fill((0,0,0))
+        self.win.fill((0,200,200))
         self.text_input.draw(self.win)
+        self.dialogue_sys.draw(self.win)
+
+
+    def draw_start_screen(self):
+        self.win.fill((250,248,246))
         self.button.draw(self.win)
         self.mute_button.draw(self.win)
 

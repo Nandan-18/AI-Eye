@@ -2,6 +2,7 @@
 import pygame as pg
 import sys
 import logging
+from scripts import ui
 import os
 from scripts import entities, dialogue, ui, progress_bar, scoring
 from clients.stable_diffusion import stable_diffusion_client
@@ -32,44 +33,29 @@ class Game:
         # Create an instance of the Score class
         self.score = scoring.Score(1)
 
-    def main_menu(self):
-        start_button = ui.Button((self.win.get_width()//2-200, self.win.get_height()//2-25), (400, 50), "Start")
-        mute_button = ui.Button((self.win.get_width()//2-50, self.win.get_height()//40),  (100, 50), "Mute")
-        pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
-        pg.mixer.music.play(-1)
-        menu_playing = True
-        while menu_playing:
-            for event in pg.event.get():
-                if event.type == pg.QUIT:
-                    self.quit()
-
-            if start_button.clicked:
-                self.click.play()
-                menu_playing = False
-            
-            start_button.update(pg.mouse.get_pressed(), pg.mouse.get_pos())
-            mute_button.update(pg.mouse.get_pressed(), pg.mouse.get_pos())
-
-            # mute audio
-            if mute_button.clicked:
-                pg.mixer.music.stop()
-            
-            pg.display.update()
-            self.win.fill((250, 248, 246))
-            start_button.draw(self.win)
-            mute_button.draw(self.win) 
-
-
-
-
     def load(self):
-        self.text_input = ui.TextInput((100, 100), "pizza")
-        self.button = ui.Button((10, 10), (100, 50), "hey")
-        self.image = pg.surface.Surface((512, 512))
-        self.word = utils.FileUtils.get_random_word()
+        if self.playing == False:
+            self.text_input = ui.TextInput((100, 100), "AI Game Jam Game")
+            self.button = ui.Button((275, 200), (400, 50), "Start")
 
-        pg.mixer.music.load('sounds/Suspense.mp3')
-        pg.mixer.music.play(-1)
+            self.mute_button = ui.Button((800, 10), (100, 50), "Mute")
+
+        if  self.playing == False:
+            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+            self.button = ui.Button((275,200), (400, 50),"Start")
+
+            pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
+            pg.mixer.music.play(-1)
+ 
+
+        if self.playing == True:
+            self.button = ui.Button((10, 10), (100, 50), "hey")
+            self.image = pg.surface.Surface((512, 512))
+            self.word = utils.FileUtils.get_random_word()
+            self.text_input = ui.TextInput((100, 100), self.word, True, 50, 10)
+
+            pg.mixer.music.load('sounds/Suspense.mp3')
+            pg.mixer.music.play(-1)
 
         self.dialogue_sys = dialogue.DialogueSystem()
 
@@ -78,16 +64,15 @@ class Game:
         self.clock.tick(self.fps)
         mouse_pos = pg.mouse.get_pos()
         mouse_buttons = pg.mouse.get_pressed()
-        
-
         events = pg.event.get()
         for event in events:
-            if event.type == pg.QUIT:
-                self.quit()
-
             if event.type == pg.VIDEORESIZE:
                 self.win = pg.display.set_mode(
                     (event.w, event.h), pg.RESIZABLE)
+
+
+            if event.type == pg.QUIT:
+                self.quit()
             if self.playing == True:
                 if event.type == pg.KEYDOWN:
                     # If you press RIGHT arrow key, run synchronously
@@ -131,28 +116,54 @@ class Game:
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
         self.dialogue_sys.update(events)
+        self.mute_button.update(mouse_buttons, mouse_pos)
 
+        if self.text_input.shake == 30:
+            self.wrong_answer.play()
 
+        # load main game
+        if self.button.clicked and self.playing == False:
+            self.click.play()
+            self.playing = True
+            self.load()
+
+        # mute audio
+        if self.mute_button.clicked:
+            pg.mixer.music.stop()
 
     def draw(self):
         self.win.fill((0, 200, 200))
         self.text_input.draw(self.win)
         self.dialogue_sys.draw(self.win)
         self.score.draw(self.win)  # Draw the score
-        self.win.blit(pg.transform.scale(
-            self.image,
-            tuple(stable_diffusion_client.image_dimensions)),
-            (self.win.get_width()/2 - self.image.get_width()//2, self.win.get_height()/3 - self.image.get_height()//2),
-        )
 
+    def draw_start_screen(self):
+        self.win.fill((250, 248, 246))
+        self.button.draw(self.win)
+        self.mute_button.draw(self.win)
+
+        if self.playing == True:
+            self.win.blit(pg.transform.scale(
+                self.image,
+                tuple(stable_diffusion_client.image_dimensions)),
+                (0, 200),
+            )
+
+    #def draw_start_screen(self):
+    #    self.win.fill((250, 248, 246))
+     #   self.button.draw(self.win)
+      #  self.mute_button.draw(self.win)
 
     def run(self):
-        self.main_menu()
         self.load()
 
         while True:
             self.update()
-            self.draw()
+
+            if self.playing == False:
+                self.draw_start_screen()
+            if self.playing == True:
+                self.draw()
 
     def quit(self):
         pg.quit()

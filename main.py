@@ -21,9 +21,16 @@ class Game:
             if  self.playing == False:
                 self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
                 self.button = ui.Button((275,200), (400, 50),"Start")
+
+                pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
+                pg.mixer.music.play(-1)
+                
             if self.playing == True:
                 self.text_input = ui.TextInput((100,100), "pizza")
                 self.button = ui.Button((10,10), (100, 50),"hey")
+
+                pg.mixer.music.load('sounds/Suspense.mp3')
+                pg.mixer.music.play(-1)
 
 
     def update(self):
@@ -57,6 +64,7 @@ class Game:
 
     def run(self):
         self.load()
+
         while True:
             self.update()
 

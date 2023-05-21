@@ -23,21 +23,21 @@ class Game:
 
 
     def load(self):
-            if  self.playing == False:
-                self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-                self.button = ui.Button((275,200), (400, 50),"Start")
+        if  self.playing == False:
+            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+            self.button = ui.Button((275,200), (400, 50),"Start")
 
-                pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
-                pg.mixer.music.play(-1)
-                
-            if self.playing == True:
-                self.text_input = ui.TextInput((100,100), "pizza")
-                self.button = ui.Button((10,10), (100, 50),"hey")
+            pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
+            pg.mixer.music.play(-1)
+            
+        if self.playing == True:
+            self.text_input = ui.TextInput((100,100), "pizza")
+            # self.button = ui.Button((10,10), (100, 50),"hey")
 
-                pg.mixer.music.load('sounds/Suspense.mp3')
-                pg.mixer.music.play(-1)
+            pg.mixer.music.load('sounds/Suspense.mp3')
+            pg.mixer.music.play(-1)
 
-            self.dialogue_sys = dialouge.DialougeSystem()
+        self.dialogue_sys = dialouge.DialougeSystem()
 
 
     def update(self):
@@ -49,12 +49,14 @@ class Game:
         for event in events:
             if event.type == pg.VIDEORESIZE:
                 self.win = pg.display.set_mode((event.w, event.h), pg.RESIZABLE)
+
+            
             if event.type == pg.QUIT:
                 self.quit()
                 
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
-        self.dialogue_sys.update()
+        self.dialogue_sys.update(events)
 
         #load main game
         if self.button.clicked and self.playing == False:
@@ -63,9 +65,8 @@ class Game:
         
     
     def draw(self):
-        self.win.fill((0,0,0))
+        self.win.fill((0,200,200))
         self.text_input.draw(self.win)
-        self.button.draw(self.win)
         self.dialogue_sys.draw(self.win)
 
 

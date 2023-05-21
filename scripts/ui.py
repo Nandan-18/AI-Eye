@@ -78,7 +78,7 @@ class TextInput:
         self.spacing = spacing
         self.shake = 0
         self.frame_count = 0
-
+        self.visible = False
         # current guess
         self.boxes = [LetterBox(pos, i, box_size, spacing) for i in range(self.length)]
 
@@ -88,34 +88,36 @@ class TextInput:
         return "".join([box.letter for box in self.boxes])
 
     def update(self, events : list):
-            if self.shake > 0:
-                self.shake -= 1
-                for box in self.boxes:
-                    box.shake = True  
-            else:
-                for box in self.boxes:
-                    box.shake = False
+            if self.visible:
+                if self.shake > 0:
+                    self.shake -= 1
+                    for box in self.boxes:
+                        box.shake = True  
+                else:
+                    for box in self.boxes:
+                        box.shake = False
 
-            for event in events:
-                if event.type == pg.KEYDOWN and event.unicode.isalpha() and self.cursor != self.length:
-                    isactive = self.cursor+1 != self.length 
-                    self.boxes[self.cursor].update_key(event.unicode, isactive)
-                    if self.cursor:
-                        self.boxes[self.cursor-1].active = False
-                    self.cursor += 1
-                    if self.get_cur_word() != self.word_ans and self.cursor == self.length:
-                        self.shake = 30
-                elif event.type == pg.KEYDOWN and event.key == pg.K_BACKSPACE and self.cursor != 0:
-                    self.cursor -= 1 
-                    self.boxes[self.cursor].delete_char()
-                    if self.cursor != 0:
-                        self.boxes[self.cursor-1].active = True
+                for event in events:
+                    if event.type == pg.KEYDOWN and event.unicode.isalpha() and self.cursor != self.length:
+                        isactive = self.cursor+1 != self.length 
+                        self.boxes[self.cursor].update_key(event.unicode, isactive)
+                        if self.cursor:
+                            self.boxes[self.cursor-1].active = False
+                        self.cursor += 1
+                        if self.get_cur_word() != self.word_ans and self.cursor == self.length:
+                            self.shake = 30
+                    elif event.type == pg.KEYDOWN and event.key == pg.K_BACKSPACE and self.cursor != 0:
+                        self.cursor -= 1 
+                        self.boxes[self.cursor].delete_char()
+                        if self.cursor != 0:
+                            self.boxes[self.cursor-1].active = True
             
 
     def draw(self, win : pg.Surface):
         # print(self.shake)
-        for box in self.boxes:
-            box.draw(win)
+        if self.visible:
+            for box in self.boxes:
+                box.draw(win)
 
 class LetterBox:
     def __init__(self, start_pos : tuple, letter_no : int, size : int, spacing : int, letter : str = "", active : bool = False) -> None:

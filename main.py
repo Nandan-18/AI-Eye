@@ -40,18 +40,15 @@ class Game:
 
             self.mute_button = ui.Button((800, 10), (100, 50), "Mute")
 
-        if self.playing == False:
-            self.text_input = ui.TextInput((100, 100), "AI Game Jam Game")
-            self.button = ui.Button((275, 200), (400, 50), "Start")
-
             pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
             pg.mixer.music.play(-1)
+ 
 
         if self.playing == True:
-            self.text_input = ui.TextInput((100, 100), "pizza")
             self.button = ui.Button((10, 10), (100, 50), "hey")
             self.image = pg.surface.Surface((512, 512))
             self.word = utils.FileUtils.get_random_word()
+            self.text_input = ui.TextInput((100, 100), self.word, True, 50, 10)
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
@@ -75,6 +72,7 @@ class Game:
                 if event.type == pg.KEYDOWN:
                     # If you press RIGHT arrow key, run synchronously
                     if event.key == pg.K_RIGHT:
+                        self.text_input.visible = True
                         image_bytes = stable_diffusion_client.run(
                             prompt="A dog holding a gameboy console",
                         )
@@ -146,10 +144,10 @@ class Game:
                 (0, 200),
             )
 
-    def draw_start_screen(self):
-        self.win.fill((250, 248, 246))
-        self.button.draw(self.win)
-        self.mute_button.draw(self.win)
+    #def draw_start_screen(self):
+    #    self.win.fill((250, 248, 246))
+     #   self.button.draw(self.win)
+      #  self.mute_button.draw(self.win)
 
     def run(self):
         self.load()

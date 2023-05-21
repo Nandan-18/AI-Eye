@@ -6,6 +6,7 @@ from scripts import ui
 
 class Game:
     def __init__(self) -> None:
+        pg.mixer.pre_init(16000, -16, 2, 2048)
         pg.init()
         self.win = pg.display.set_mode(size=(1000,500))
         self.clock = pg.time.Clock()
@@ -18,6 +19,7 @@ class Game:
 
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
+        self.right_answer = pg.mixer.Sound("sounds/GoodAnswerDing.mp3")
 
 
     def load(self):
@@ -56,6 +58,9 @@ class Game:
 
         if self.text_input.shake == 30:
             self.wrong_answer.play()
+
+        if self.text_input.get_cur_word() == self.text_input.word_ans and self.text_input.cursor == self.text_input.length:
+            self.right_answer.play()
         
         #load main game
         if self.button.clicked and self.playing == False:

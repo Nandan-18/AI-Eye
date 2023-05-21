@@ -1,6 +1,7 @@
 #main function
 import pygame as pg
 import sys
+import logging
 import os
 from scripts import ui, dialouge
 
@@ -18,10 +19,23 @@ class Game:
 
         pg.display.set_caption("Game")
 
+        self.playing = False
+
 
     def load(self):
-        self.text_input = ui.TextInput((100,100), "pizza")
-        self.button = ui.Button((10,10), (100, 50),"hey")
+            if  self.playing == False:
+                self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+                self.button = ui.Button((275,200), (400, 50),"Start")
+
+                pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
+                pg.mixer.music.play(-1)
+                
+            if self.playing == True:
+                self.text_input = ui.TextInput((100,100), "pizza")
+                self.button = ui.Button((10,10), (100, 50),"hey")
+
+                pg.mixer.music.load('sounds/Suspense.mp3')
+                pg.mixer.music.play(-1)
 
         self.dialogue_sys = dialouge.DialougeSystem()
 
@@ -42,7 +56,10 @@ class Game:
         self.button.update(mouse_buttons, mouse_pos)
         self.dialogue_sys.update()
 
-
+        #load main game
+        if self.button.clicked and self.playing == False:
+            self.playing = True
+            self.load()
         
     
     def draw(self):
@@ -52,11 +69,24 @@ class Game:
         self.dialogue_sys.draw(self.win)
 
 
+    def draw_start_screen(self):
+        self.win.fill((250,248,246))
+        self.button.draw(self.win)
+
+    def draw_start_screen(self):
+        self.win.fill((250,248,246))
+        self.button.draw(self.win)
+
     def run(self):
         self.load()
+
         while True:
             self.update()
-            self.draw()
+
+            if self.playing == False:
+                self.draw_start_screen()
+            if self.playing == True:
+                self.draw()
     
     def quit(self):
         pg.quit()

@@ -3,7 +3,7 @@ import pygame as pg
 import sys
 import logging
 import os
-from scripts import ui, dialouge
+from scripts import entities, ui, dialouge
 from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
 import asyncio
@@ -35,10 +35,6 @@ class Game:
         
             self.mute_button = ui.Button((800, 10), (100, 50),"Mute")
 
-        if  self.playing == False:
-            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-            self.button = ui.Button((275,200), (400, 50),"Start")
-
             pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
             pg.mixer.music.play(-1)
             
@@ -50,6 +46,7 @@ class Game:
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
+
 
         self.dialogue_sys = dialouge.DialougeSystem()
 

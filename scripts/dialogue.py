@@ -4,7 +4,7 @@ import pygame as pg
 HARD_CONSONANTS = ['q', 't', 'p', 'd', 'g', 'j', 'k', 'x', 'c', 'b']
 SOFT_CONSONANTS = ['w', 'r', 'y', 's', 'f', 'h', 'l', 'z', 'v', 'n', 'm']
 
-class DialougeSystem:
+class DialogueSystem:
     def __init__(self,spacing=15, text_size=32) -> None:
         self.font = pg.font.Font('font/Cascadia.ttf', text_size)
         self.host_icon = pg.image.load("assets/dialogue_host.png")

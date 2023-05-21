@@ -8,7 +8,7 @@ SOFT_CONSONANTS = ['w', 'r', 'y', 's', 'f', 'h', 'l', 'z', 'v', 'n', 'm']
 class DialogueSystem:
     def __init__(self,spacing=15, text_size=32) -> None:
         self.font = pg.font.Font('font/Cascadia.ttf', text_size)
-        self.host_icon = Entity((0,0),"assets/robohost", 0.2)
+        self.host_icon = Entity((0,0),["assets/robo_idle","assets/robo_talking"], 0.2, "robo_idle")
         self.dialogue_border = pg.image.load("assets/dialogue_border.png")
         self.dialogue_border = pg.transform.scale_by(self.dialogue_border, 0.2)
         self.talking = False
@@ -48,6 +48,10 @@ class DialogueSystem:
 
             else:
                 self.talking = False
+            if self.talking:
+                self.host_icon.anim.set_state("robo_talking")
+            else:
+                self.host_icon.anim.set_state("robo_idle")
             
     def draw(self, win : pg.Surface):
         if self.visible:

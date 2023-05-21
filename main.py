@@ -20,7 +20,7 @@ class Game:
     def load(self):
             if  self.playing == False:
                 self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-                self.button = ui.Button((200,50), (400, 50),"AI Game Jam Game")
+                self.button = ui.Button((275,200), (400, 50),"Start")
             if self.playing == True:
                 self.text_input = ui.TextInput((100,100), "pizza")
                 self.button = ui.Button((10,10), (100, 50),"hey")

@@ -33,21 +33,21 @@ class Game:
 
     def load(self):
         
-            self.mute_button = ui.Button((800, 10), (100, 50),"Mute")
+        self.mute_button = ui.Button((800, 10), (100, 50),"Mute")
 
         if  self.playing == False:
             self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
             self.button = ui.Button((275,200), (400, 50),"Start")
 
-                pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
-                pg.mixer.music.play(-1)
+            pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
+            pg.mixer.music.play(-1)
                 
-            if self.playing == True:
-                self.text_input = ui.TextInput((100,100), "pizza")
-                self.button = ui.Button((10,10), (100, 50),"hey")
+        if self.playing == True:
+            self.text_input = ui.TextInput((100,100), "pizza")
+            self.button = ui.Button((10,10), (100, 50),"hey")
 
-                pg.mixer.music.load('sounds/Suspense.mp3')
-                pg.mixer.music.play(-1)
+            pg.mixer.music.load('sounds/Suspense.mp3')
+            pg.mixer.music.play(-1)
 
         self.dialogue_sys = dialouge.DialougeSystem()
 

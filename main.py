@@ -41,7 +41,7 @@ class Game:
         self.button.update(mouse_buttons, mouse_pos)
 
         #load main game
-        if self.button.clicked == mouse_pos and self.playing == False:
+        if self.button.clicked and self.playing == False:
             self.playing = True
             self.load()
         

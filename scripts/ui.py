@@ -78,7 +78,7 @@ class TextInput:
         self.spacing = spacing
         self.shake = 0
         self.frame_count = 0
-        self.visible = False
+        self.visible = visible
         # current guess
         self.boxes = [LetterBox(pos, i, box_size, spacing) for i in range(self.length)]
 

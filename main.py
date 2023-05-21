@@ -1,6 +1,7 @@
 #main function
 import pygame as pg
 import sys
+import logging
 from scripts import ui
 
 class Game:
@@ -13,10 +14,16 @@ class Game:
 
         pg.display.set_caption("Game")
 
+        self.playing = False
+
 
     def load(self):
-        self.text_input = ui.TextInput((100,100), "pizza")
-        self.button = ui.Button((10,10), (100, 50),"hey")
+            if  self.playing == False:
+                self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+                self.button = ui.Button((200,50), (400, 50),"AI Game Jam Game")
+            if self.playing == True:
+                self.text_input = ui.TextInput((100,100), "pizza")
+                self.button = ui.Button((10,10), (100, 50),"hey")
 
 
     def update(self):
@@ -33,7 +40,10 @@ class Game:
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
 
-
+        #load main game
+        if self.button.clicked == mouse_pos and self.playing == False:
+            self.playing = True
+            self.load()
         
     
     def draw(self):
@@ -41,11 +51,19 @@ class Game:
         self.text_input.draw(self.win)
         self.button.draw(self.win)
 
+    def draw_start_screen(self):
+        self.win.fill((250,248,246))
+        self.button.draw(self.win)
+
     def run(self):
         self.load()
         while True:
             self.update()
-            self.draw()
+
+            if self.playing == False:
+                self.draw_start_screen()
+            if self.playing == True:
+                self.draw()
     
     def quit(self):
         pg.quit()

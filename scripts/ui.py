@@ -78,9 +78,11 @@ class LetterBox:
         self.active = active
         self.size = size
         self.font = pg.font.Font('font/Anonymous.ttf', 32)
+        self.offset = (0, 0) 
 
-    def shake(self, shake_amt):
-        pass
+    def shake(self, shake_amt : int):
+        self.offset = (random.randint(0,8), random.randint(0,8))
+
 
     def delete_char(self):
         self.letter = ""
@@ -89,6 +91,7 @@ class LetterBox:
     def update(self, letter, active):
         self.letter = letter
         self.active = active
+        self.offset = (0, 0) 
 
 
     def draw(self, win : pg.Surface):

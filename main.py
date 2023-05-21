@@ -17,9 +17,13 @@ class Game:
         self.playing = False
 
         self.click = pg.mixer.Sound("sounds/Click.mp3")
+        self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
 
 
     def load(self):
+        
+            self.mute_button = ui.Button((800, 10), (100, 50),"Mute")
+
             if  self.playing == False:
                 self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
                 self.button = ui.Button((275,200), (400, 50),"Start")
@@ -48,22 +52,32 @@ class Game:
                 
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
+        self.mute_button.update(mouse_buttons, mouse_pos)
 
+        if self.text_input.shake == 30:
+            self.wrong_answer.play()
+        
         #load main game
         if self.button.clicked and self.playing == False:
             self.click.play()
             self.playing = True
             self.load()
+
+        #mute audio
+        if self.mute_button.clicked:
+            pg.mixer.music.stop()
         
     
     def draw(self):
         self.win.fill((0,0,0))
         self.text_input.draw(self.win)
         self.button.draw(self.win)
+        self.mute_button.draw(self.win)
 
     def draw_start_screen(self):
         self.win.fill((250,248,246))
         self.button.draw(self.win)
+        self.mute_button.draw(self.win)
 
     def run(self):
         self.load()

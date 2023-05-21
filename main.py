@@ -2,10 +2,9 @@
 import pygame as pg
 import sys
 import logging
-from scripts import ui
 import os
 from scripts import entities, dialogue, ui, progress_bar, scoring
-from clients.stable_diffusion import stable_diffusion_client
+from clients import stable_diffusion
 from clients import utils
 import asyncio
 
@@ -37,22 +36,16 @@ class Game:
         if self.playing == False:
             self.text_input = ui.TextInput((100, 100), "AI Game Jam Game")
             self.button = ui.Button((275, 200), (400, 50), "Start")
-
-            self.mute_button = ui.Button((800, 10), (100, 50), "Mute")
-
-        if  self.playing == False:
-            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-            self.button = ui.Button((275,200), (400, 50),"Start")
-
             pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
             pg.mixer.music.play(-1)
+            self.mute_button = ui.Button((800, 10), (100, 50), "Mute")
  
 
         if self.playing == True:
             self.button = ui.Button((10, 10), (100, 50), "hey")
             self.image = pg.surface.Surface((512, 512))
             self.word = utils.FileUtils.get_random_word()
-            self.text_input = ui.TextInput((100, 100), self.word, True, 50, 10)
+            self.text_input = ui.TextInput((200, 100), self.word, True, 50, 10)
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)

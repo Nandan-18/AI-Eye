@@ -19,15 +19,16 @@ class Game:
 
 
     def update(self):
-        for event in pg.event.get():
-            self.text_input.update(event)
+        pg.display.update()
+        self.clock.tick(self.fps)
+        events = pg.event.get()
+        for event in events:
 
             if event.type == pg.QUIT:
                 self.quit()
                 
+        self.text_input.update(events)
         
-        pg.display.update()
-        self.clock.tick(self.fps)
     
     def draw(self):
         self.win.fill((0,0,0))

@@ -31,9 +31,8 @@ class Game:
         self.score = scoring.Score(1)
 
     def main_menu(self):
-        print("in menu")
-        start_button = ui.Button((275, 200), (400, 50), "Start")
-        mute_button = ui.Button((800, 10), (100, 50), "Mute")
+        start_button = ui.Button((self.win.get_width()//2-200, self.win.get_height()//2-25), (400, 50), "Start")
+        mute_button = ui.Button((self.win.get_width()//2-50, self.win.get_height()//40),  (100, 50), "Mute")
         pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
         pg.mixer.music.play(-1)
         menu_playing = True
@@ -58,7 +57,6 @@ class Game:
             start_button.draw(self.win)
             mute_button.draw(self.win) 
 
-        print("out menu")
 
 
 

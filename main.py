@@ -16,22 +16,30 @@ class Game:
 
     def load(self):
         self.text_input = ui.TextInput((100,100), "pizza")
+        self.button = ui.Button((10,10), (100, 50),"hey")
 
 
     def update(self):
-        for event in pg.event.get():
-            self.text_input.update(event)
+        pg.display.update()
+        self.clock.tick(self.fps)
+        mouse_pos = pg.mouse.get_pos()
+        mouse_buttons = pg.mouse.get_pressed()
+        events = pg.event.get()
+        for event in events:
 
             if event.type == pg.QUIT:
                 self.quit()
                 
+        self.text_input.update(events)
+        self.button.update(mouse_buttons, mouse_pos)
+
+
         
-        pg.display.update()
-        self.clock.tick(self.fps)
     
     def draw(self):
         self.win.fill((0,0,0))
         self.text_input.draw(self.win)
+        self.button.draw(self.win)
 
     def run(self):
         self.load()

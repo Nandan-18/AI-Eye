@@ -4,8 +4,8 @@ import sys
 import logging
 from scripts import ui
 import os
-from scripts import dialogue, ui, progress_bar, scoring
-from clients import stable_diffusion
+from scripts import entities, dialogue, ui, progress_bar, scoring
+from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
 import asyncio
 
@@ -40,6 +40,10 @@ class Game:
 
             self.mute_button = ui.Button((800, 10), (100, 50), "Mute")
 
+        if  self.playing == False:
+            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
+            self.button = ui.Button((275,200), (400, 50),"Start")
+
             pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
             pg.mixer.music.play(-1)
  
@@ -65,6 +69,7 @@ class Game:
             if event.type == pg.VIDEORESIZE:
                 self.win = pg.display.set_mode(
                     (event.w, event.h), pg.RESIZABLE)
+
 
             if event.type == pg.QUIT:
                 self.quit()

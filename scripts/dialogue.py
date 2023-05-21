@@ -1,5 +1,6 @@
 
 import pygame as pg
+from .entities import Entity
 
 HARD_CONSONANTS = ['q', 't', 'p', 'd', 'g', 'j', 'k', 'x', 'c', 'b']
 SOFT_CONSONANTS = ['w', 'r', 'y', 's', 'f', 'h', 'l', 'z', 'v', 'n', 'm']
@@ -7,8 +8,9 @@ SOFT_CONSONANTS = ['w', 'r', 'y', 's', 'f', 'h', 'l', 'z', 'v', 'n', 'm']
 class DialogueSystem:
     def __init__(self,spacing=15, text_size=32) -> None:
         self.font = pg.font.Font('font/Cascadia.ttf', text_size)
-        self.host_icon = pg.image.load("assets/dialogue_host.png")
-        self.host_icon = pg.transform.smoothscale_by(self.host_icon, 0.2)
+        self.host_icon = Entity((0,0),"assets/robohost", 0.2)
+        self.dialogue_border = pg.image.load("assets/dialogue_border.png")
+        self.dialogue_border = pg.transform.scale_by(self.dialogue_border, 0.2)
         self.talking = False
         self.text = ""
         self.visible = True
@@ -27,6 +29,7 @@ class DialogueSystem:
 
     def update(self, events):
         if self.visible:
+            self.host_icon.update(events)
             for event in events:
                 if event.type == pg.KEYDOWN and event.key == pg.K_x:
                     self.start_talking("hello this is me the host", 5)
@@ -48,11 +51,14 @@ class DialogueSystem:
             
     def draw(self, win : pg.Surface):
         if self.visible:
-            pos = (self.spacing, win.get_height() - self.spacing - self.host_icon.get_height())
+            pos_border = (self.spacing, win.get_height() - self.spacing - self.dialogue_border.get_height())
+            pos_icon = (pos_border[0] + self.dialogue_border.get_height()//2 - self.host_icon.get_width()//2, pos_border[1] +self.dialogue_border.get_height()//2 - self.host_icon.get_height()//2)
             # print(win.get_height(),self.host_icon.get_height(),self.spacing, pos)
-            win.blit(self.host_icon, pos)
+            self.host_icon.pos = pos_icon
+            win.blit(self.dialogue_border, pos_border)
+            self.host_icon.draw(win)
             if self.font_surf:
-                win.blit(self.font_surf, (pos[0] + self.host_icon.get_width(), pos[1] + self.host_icon.get_height()//3))
+                win.blit(self.font_surf, (pos_border[0] + self.dialogue_border.get_width(), pos_border[1] + self.dialogue_border.get_height()//3))
             if not self.talking:
                 win.blit(self.key_surf, (win.get_width() - self.spacing - self.key_surf.get_width(), win.get_height() - self.spacing - self.key_surf.get_height()))
 

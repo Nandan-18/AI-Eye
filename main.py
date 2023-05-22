@@ -27,12 +27,14 @@ class Game:
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
 
-        # Create an instance of the Score class
         self.score = scoring.Score(1)
+        self.progress_bar = progress_bar.LoadingBar(self.win, 20)
 
     def main_menu(self):
-        start_button = ui.Button((self.win.get_width()//2-200, self.win.get_height()//2-25), (400, 50), "Start")
-        mute_button = ui.Button((self.win.get_width()//2-50, self.win.get_height()//40),  (100, 50), "Mute")
+        start_button = ui.Button(
+            (self.win.get_width()//2-200, self.win.get_height()//2-25), (400, 50), "Start")
+        mute_button = ui.Button(
+            (self.win.get_width()//2-50, self.win.get_height()//40),  (100, 50), "Mute")
         pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
         pg.mixer.music.play(-1)
         menu_playing = True
@@ -45,21 +47,18 @@ class Game:
                 self.click.play()
                 menu_playing = False
                 self.playing = True
-            
+
             start_button.update(pg.mouse.get_pressed(), pg.mouse.get_pos())
             mute_button.update(pg.mouse.get_pressed(), pg.mouse.get_pos())
 
             # mute audio
             if mute_button.clicked:
                 pg.mixer.music.stop()
-            
+
             pg.display.update()
             self.win.fill((250, 248, 246))
             start_button.draw(self.win)
-            mute_button.draw(self.win) 
-
-
-
+            mute_button.draw(self.win)
 
     def load(self):
         self.text_input = ui.TextInput((100, 100), "pizza")
@@ -70,19 +69,19 @@ class Game:
 
         pg.mixer.music.load('sounds/Suspense.mp3')
         pg.mixer.music.play(-1)
-        
-        if  self.playing == False:
-            self.text_input = ui.TextInput((100,100), "AI Game Jam Game")
-            self.button = ui.Button((275,200), (400, 50),"Start")
+
+        if self.playing == False:
+            self.text_input = ui.TextInput((100, 100), "AI Game Jam Game")
+            self.button = ui.Button((275, 200), (400, 50), "Start")
 
             pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
             pg.mixer.music.play(-1)
-            
+
         if self.playing == True:
             self.word = utils.FileUtils.get_random_word()
-            self.text_input = ui.TextInput((100,100), self.word, True)
-            self.button = ui.Button((10,10), (100, 50),"hey")
-            self.image = pg.surface.Surface((512,512))
+            self.text_input = ui.TextInput((100, 100), self.word, True)
+            self.button = ui.Button((10, 10), (100, 50), "hey")
+            self.image = pg.surface.Surface((512, 512))
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
@@ -95,7 +94,6 @@ class Game:
         self.clock.tick(self.fps)
         mouse_pos = pg.mouse.get_pos()
         mouse_buttons = pg.mouse.get_pressed()
-        
 
         events = pg.event.get()
         for event in events:
@@ -118,7 +116,7 @@ class Game:
                     )
                     logger.debug("Image generated!")
 
-                    # Pygame needs a name for the image file even if it's 
+                    # Pygame needs a name for the image file even if it's
                     # not going to be saved, so we just use a placeholder.
                     self.image = pg.image.load(
                         image_bytes, "assets/placeholder.svg"
@@ -143,13 +141,17 @@ class Game:
 
     def draw(self):
         self.win.fill((0, 200, 200))
+
         self.text_input.draw(self.win)
         self.dialogue_sys.draw(self.win)
-        self.score.draw(self.win)  # Draw the score
+        self.score.draw(self.win)
+        # self.progress_bar.draw()
+
         self.win.blit(pg.transform.scale(
             self.image,
             tuple(stable_diffusion_client.image_dimensions)),
-            (self.win.get_width()/2 - self.image.get_width()//2, self.win.get_height()/3 - self.image.get_height()//2),
+            (self.win.get_width()/2 - self.image.get_width()//2,
+             self.win.get_height()/3 - self.image.get_height()//2),
         )
 
     def run(self):

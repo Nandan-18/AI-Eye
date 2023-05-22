@@ -26,6 +26,7 @@ class StableDiffusionClient:
         self.version = version
         self.api_token = REPLICATE_API_KEY
         self.image_dimensions = image_dimensions
+        self.session = requests.Session()
 
     def load_image(
         self,
@@ -38,7 +39,7 @@ class StableDiffusionClient:
             image_bytes = load_image(urls)
             image = pygame.image.load(image_bytes)
         """
-        response = requests.get(urls[0])
+        response = self.session.get(urls[0])
         image_bytes = io.BytesIO(response.content)
         return image_bytes
 

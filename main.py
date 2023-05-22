@@ -7,7 +7,8 @@ import os
 from scripts import entities, dialogue, ui, progress_bar, scoring
 from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
-import asyncio
+from loguru import logger
+import threading
 
 
 class Game:
@@ -34,6 +35,7 @@ class Game:
 
         self.score = None
         self.progress_bar = None
+        self.image_gen_thread = None
 
     def main_menu(self):
         start_button = ui.Button(
@@ -69,7 +71,9 @@ class Game:
         self.text_input = ui.TextInput((100, 100), "pizza")
         self.button = ui.Button((10, 10), (100, 50), "hey")
         self.score = scoring.Score(1)
-        self.image = pg.surface.Surface((512, 512))
+        # self.image = pg.Surface((512, 512))
+        # self.image = pg.Surface((512, 512)).convert_alpha()
+        self.image = pg.Surface((512, 512), pg.SRCALPHA)
         self.word = utils.FileUtils.get_random_word()
         self.has_generated_image = False
 
@@ -84,20 +88,16 @@ class Game:
             pg.mixer.music.play(-1)
 
         if self.playing == True:
-            self.text_input = ui.TextInput((100, 100), "", True)
+            self.text_input = ui.TextInput((100, 100), self.word, True)
+            logger.debug(f"self.text_input.__dict__: {self.text_input.__dict__}")
             self.button = ui.Button((10, 10), (100, 50), "hey")
             self.progress_bar = progress_bar.ProgressBar(200, 30, 1000)
-
-            # Still need to make this transparent
-            # self.image = pg.surface.Surface((512,512)).set_colorkey((0,0,0))
-            self.image = pg.surface.Surface((512, 512))
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
 
         self.has_generated_image = False
         self.dialogue_sys = dialogue.DialogueSystem()
-        self.word = utils.FileUtils.get_random_word()
 
     def update(self):
         pg.display.update()
@@ -106,6 +106,11 @@ class Game:
         mouse_buttons = pg.mouse.get_pressed()
 
         events = pg.event.get()
+
+        self.text_input.update(events)
+        self.button.update(mouse_buttons, mouse_pos)
+        self.dialogue_sys.update(events)
+
         for event in events:
             if event.type == pg.QUIT:
                 self.quit()
@@ -116,40 +121,34 @@ class Game:
 
             if self.playing == True:
                 self.progress_bar.update()
-                if self.has_generated_image == False:
-                    prompt = self.preprompt + self.word
 
-                    logging.info("Generating image...")
-                    image_bytes = stable_diffusion_client.run(
-                        prompt=prompt,
-                    )
+        if self.playing == True:
+            if self.has_generated_image == False:
+                prompt = self.preprompt + self.word
 
-                    # Pygame needs a name for the image file even if it's
-                    # not going to be saved, so we just use a placeholder.
-                    self.image = pg.image.load(
-                        image_bytes, "assets/placeholder.svg"
-                    )
-                    logging.info("Image generated!")
-                    self.has_generated_image = True
-                else:
-                    user_input = self.text_input.get_cur_word()
-                    if user_input == self.word:
+                logging.info("Generating image...")
+                # If there are no threads running, start a new one.
+                if threading.active_count() == 1:
+                    image_gen_thread = threading.Thread(target=self.generate_image, args=(prompt,))
+                    image_gen_thread.start()
+            else:
+                user_input = self.text_input.get_cur_word()
+                if user_input == self.word:
+                    logger.debug("Correct!")
+                    # self.image = pg.image.load("assets/correct_placeholder.jpeg")
 
-                        # Add points to score
-                        # Add success dialogue here
+    def generate_image(self, prompt):
+        image_bytes = stable_diffusion_client.run(
+            prompt=prompt,
+        )
+        # Pygame needs a name for the image file even if it's
+        # not going to be saved, so we just use a placeholder.
+        self.image = pg.image.load(
+            image_bytes, "assets/placeholder.svg"
+        )
+        logging.info("Image generated!")
+        self.has_generated_image = True
 
-                        self.word = utils.FileUtils.get_random_word()
-                        prompt = self.preprompt + self.word
-                        image_bytes = stable_diffusion_client.run(
-                            prompt=prompt,
-                        )
-                        self.image = pg.image.load(
-                            image_bytes, "assets/placeholder.svg"
-                        )
-
-        self.text_input.update(events)
-        self.button.update(mouse_buttons, mouse_pos)
-        self.dialogue_sys.update(events)
 
     def draw(self):
         self.win.fill((0, 200, 200))
@@ -162,12 +161,14 @@ class Game:
             self.progress_bar.draw(self.win, self.win.get_width() // 2 - self.progress_bar.width // 2,
                                    self.win.get_height() - 50)
 
-        self.win.blit(pg.transform.scale(
-            self.image,
-            tuple(stable_diffusion_client.image_dimensions)),
-            (self.win.get_width()/2 - self.image.get_width()//2,
-             self.win.get_height()/3 - self.image.get_height()//2),
-        )
+            self.win.blit(pg.transform.scale(
+                self.image,
+                tuple(stable_diffusion_client.image_dimensions)),
+                (self.win.get_width()/2 - self.image.get_width()//2,
+                self.win.get_height()/3 - self.image.get_height()//2),
+            )
+
+        
 
     def run(self):
         self.main_menu()

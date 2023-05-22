@@ -1,4 +1,5 @@
-# main function
+# main functionality
+
 import pygame as pg
 import sys
 import logging
@@ -7,6 +8,7 @@ from scripts import entities, dialogue, ui, progress_bar, scoring
 from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
 import asyncio
+
 
 class Game:
     def __init__(self) -> None:
@@ -30,8 +32,8 @@ class Game:
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
 
-        self.score = scoring.Score(1)
-        self.progress_bar = progress_bar.LoadingBar(self.win, 20)
+        self.score = None
+        self.progress_bar = None
 
     def main_menu(self):
         start_button = ui.Button(
@@ -66,6 +68,7 @@ class Game:
     def load(self):
         self.text_input = ui.TextInput((100, 100), "pizza")
         self.button = ui.Button((10, 10), (100, 50), "hey")
+        self.score = scoring.Score(1)
         self.image = pg.surface.Surface((512, 512))
         self.word = utils.FileUtils.get_random_word()
         self.has_generated_image = False
@@ -81,12 +84,13 @@ class Game:
             pg.mixer.music.play(-1)
 
         if self.playing == True:
-            self.text_input = ui.TextInput((100,100), "", True)
-            self.button = ui.Button((10,10), (100, 50),"hey")
+            self.text_input = ui.TextInput((100, 100), "", True)
+            self.button = ui.Button((10, 10), (100, 50), "hey")
+            self.progress_bar = progress_bar.ProgressBar(200, 30, 1000)
 
             # Still need to make this transparent
             # self.image = pg.surface.Surface((512,512)).set_colorkey((0,0,0))
-            self.image = pg.surface.Surface((512,512))
+            self.image = pg.surface.Surface((512, 512))
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
@@ -94,7 +98,6 @@ class Game:
         self.has_generated_image = False
         self.dialogue_sys = dialogue.DialogueSystem()
         self.word = utils.FileUtils.get_random_word()
-
 
     def update(self):
         pg.display.update()
@@ -112,6 +115,7 @@ class Game:
                     (event.w, event.h), pg.RESIZABLE)
 
             if self.playing == True:
+                self.progress_bar.update()
                 if self.has_generated_image == False:
                     prompt = self.preprompt + self.word
 
@@ -120,7 +124,7 @@ class Game:
                         prompt=prompt,
                     )
 
-                    # Pygame needs a name for the image file even if it's 
+                    # Pygame needs a name for the image file even if it's
                     # not going to be saved, so we just use a placeholder.
                     self.image = pg.image.load(
                         image_bytes, "assets/placeholder.svg"
@@ -153,7 +157,10 @@ class Game:
         self.text_input.draw(self.win)
         self.dialogue_sys.draw(self.win)
         self.score.draw(self.win)
-        # self.progress_bar.draw()
+
+        if self.playing:
+            self.progress_bar.draw(self.win, self.win.get_width() // 2 - self.progress_bar.width // 2,
+                                   self.win.get_height() - 50)
 
         self.win.blit(pg.transform.scale(
             self.image,
@@ -169,6 +176,8 @@ class Game:
         while True:
             self.update()
             self.draw()
+            pg.display.update()
+            self.clock.tick(60)
 
     def quit(self):
         pg.quit()

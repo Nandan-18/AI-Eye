@@ -1,75 +1,67 @@
-import pygame as pg
+import pygame
 
 
-class LoadingBar:
-    def __init__(self, screen, work_duration):
-        self.screen = screen
-        self.CLOCK = pg.time.Clock()
-        self.WORK_DURATION = work_duration
-        self.font = pg.font.Font('./font/Cascadia.ttf', 32)
-
-        # Background
-
-        self.LOADING_BG = pg.image.load('./assets/load_bg.png')
-
-        self.LOADING_BG_RECT = self.LOADING_BG.get_rect(
-            center=(self.screen.get_width() // 2, self.screen.get_height() // 2))
-
-        # Loading Bar and variables
-
-        self.loading_bar = pg.image.load('./assets/load_bar.png')
-        self.loading_bar_rect = self.loading_bar.get_rect(
-            midleft=(self.screen.get_width() // 2 - 200, self.screen.get_height() // 2))
-
-        self.loading_finished = False
-        self.loading_progress = 0
-        self.loading_bar_width = 8
-
-        # Countdown
-        self.countdown_time = self.WORK_DURATION
-        self.start_time = pg.time.get_ticks()
-
-    def work(self):
-        # Do work based on time
-        start_ticks = pg.time.get_ticks()
-        while True:
-            elapsed_time = (pg.time.get_ticks() - start_ticks) / 1000
-            if elapsed_time >= self.WORK_DURATION:
-                break
-
-            self.loading_progress = int(
-                (elapsed_time / self.WORK_DURATION) * 100)
-
-        self.loading_finished = True
+class ProgressBar:
+    def __init__(self, width, height, countdown_time):
+        self.width = width
+        self.height = height
+        self.countdown_time = countdown_time
+        self.remaining_time = countdown_time
+        pygame.font.init()
+        self.font = pygame.font.Font('./font/Cascadia.ttf', 24)
+        self.is_complete = False
 
     def update(self):
+        self.remaining_time -= 1
+        if self.remaining_time <= 0:
+            self.remaining_time = 0
+            self.is_complete = True
 
-        # self.work()
-        # self.screen.fill("#0d0e2e")
+    def draw(self, surface, x, y):
+        pygame.draw.rect(surface, (235, 69, 95),
+                         (x, y, self.width, self.height), border_radius=10)
 
-        if not self.loading_finished:
-            elapsed_time = (pg.time.get_ticks() - self.start_time) / 1000
-            remaining_time = max(self.countdown_time - elapsed_time, 0)
-            self.loading_bar_width = self.loading_progress / 100 * 400
+        progress_width = int(
+            (self.remaining_time / self.countdown_time) * (self.width - 4))
 
-            loading_bar_scaled = pg.transform.scale(
-                self.loading_bar, (int(self.loading_bar_width), 50))
-            loading_bar_rect = loading_bar_scaled.get_rect(
-                midleft=(self.screen.get_width() // 2 - 200, self.screen.get_height() // 2))
+        progress_rect = pygame.Rect(
+            x + 2, y + 2, progress_width, self.height - 4)
 
-            self.screen.blit(self.LOADING_BG, self.LOADING_BG_RECT)
-            self.screen.blit(loading_bar_scaled, loading_bar_rect)
+        pygame.draw.rect(surface, (235, 69, 95),
+                         progress_rect, border_radius=10)
 
-            # Display countdown text
-            countdown_text = self.font.render(
-                str(round(remaining_time, 1)), True, "white")
-            countdown_rect = countdown_text.get_rect(
-                center=(self.screen.get_width() // 2 + 10, self.screen.get_height() // 2 + 100))
-            self.screen.blit(countdown_text, countdown_rect)
+        text = self.font.render(
+            str(self.remaining_time), True, (235, 235, 235))
+        text_rect = text.get_rect(
+            center=(x + self.width // 2, y + self.height // 2))
 
-        pg.display.update()
-        self.CLOCK.tick(60)
+        surface.blit(text, text_rect)
 
-    def draw(self):
-        while True:
-            self.update()
+#     def run(self):
+#         pygame.init()
+#         clock = pygame.time.Clock()
+
+#         window_width = 400
+#         window_height = 200
+#         window = pygame.display.set_mode((window_width, window_height))
+
+#         while not self.is_complete:
+#             for event in pygame.event.get():
+#                 if event.type == pygame.QUIT:
+#                     pygame.quit()
+#                     sys.exit()
+
+#             self.update()
+#             self.draw()
+
+#             window.fill((13, 14, 46))
+#             # Blit the progress bar surface onto the main window
+#             window.blit(self.surface, (window_width // 2 - self.width // 2, window_height // 2 - self.height // 2))
+#             pygame.display.flip()
+#             clock.tick(1)
+
+
+# # Example usage
+# # Initialize progress bar with width: 200, height: 30, countdown_time: 20 seconds
+# progress_bar = ProgressBar(200, 30, 10)
+# progress_bar.run()  # Run the progress bar

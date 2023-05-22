@@ -11,8 +11,9 @@ class Score:
 
     def hint_update(self):
         if self.hint:
-            self.score -= 500
+            self.score -= 100
             self.hint = False
+        return self.score
 
     def round_update(self, correct):
         if correct == 0:
@@ -45,8 +46,7 @@ class Score:
             pygame.draw.rect(screen, (0, 200, 0), hint_button, 3)
             if pygame.mouse.get_pressed()[0]:
                 self.hint = True
-                self.hint_update()
-
+                self.score = self.hint_update()
 
 # # Initialize Pygame
 # pygame.init()

@@ -6,7 +6,6 @@ import os
 from scripts import ui, dialouge
 from clients.stable_diffusion import stable_diffusion_client
 from clients import utils
-import asyncio
 
 class Game:
     def __init__(self) -> None:
@@ -18,6 +17,10 @@ class Game:
         self.win  = pg.display.set_mode((w, h-30), pg.RESIZABLE)
         self.clock = pg.time.Clock()
         self.fps = 60
+        self.has_generated_image = False
+
+        # Change this to change the style of art generated.
+        self.preprompt = "Isometic voxel art of "
 
 
         pg.display.set_caption("Game")
@@ -45,13 +48,15 @@ class Game:
         if self.playing == True:
             self.text_input = ui.TextInput((100,100), "", True)
             self.button = ui.Button((10,10), (100, 50),"hey")
+
+            # Still need to make this transparent
+            # self.image = pg.surface.Surface((512,512)).set_colorkey((0,0,0))
             self.image = pg.surface.Surface((512,512))
 
             pg.mixer.music.load('sounds/Suspense.mp3')
             pg.mixer.music.play(-1)
 
         self.word = utils.FileUtils.get_random_word()
-        self.has_generated_image = False
         self.dialogue_sys = dialouge.DialougeSystem()
 
 
@@ -60,6 +65,7 @@ class Game:
         self.clock.tick(self.fps)
         mouse_pos = pg.mouse.get_pos()
         mouse_buttons = pg.mouse.get_pressed()
+        self.image = "assets/placeholder.svg"
 
         events = pg.event.get()
         for event in events:
@@ -70,20 +76,36 @@ class Game:
                 self.quit()
 
             if self.playing == True:
-                preprompt = "Isometic art of "
-                prompt = preprompt + self.word
+                if self.has_generated_image == False:
+                    prompt = self.preprompt + self.word
 
-                logging.info("Generating image...")
-                image_bytes = stable_diffusion_client.run_new(
-                    prompt=prompt,
-                )
+                    logging.info("Generating image...")
+                    image_bytes = stable_diffusion_client.run(
+                        prompt=prompt,
+                    )
 
-                # Pygame needs a name for the image file even if it's 
-                # not going to be saved, so we just use a placeholder.
-                self.image = pg.image.load(
-                    image_bytes, "assets/placeholder.svg"
-                )
-                logging.info("Image generated!")
+                    # Pygame needs a name for the image file even if it's 
+                    # not going to be saved, so we just use a placeholder.
+                    self.image = pg.image.load(
+                        image_bytes, "assets/placeholder.svg"
+                    )
+                    logging.info("Image generated!")
+                    self.has_generated_image = True
+                else:
+                    user_input = self.text_input.get_cur_word()
+                    if user_input == self.word:
+
+                        # Add points to score
+                        # Add success dialogue here
+
+                        self.word = utils.FileUtils.get_random_word()
+                        prompt = self.preprompt + self.word
+                        image_bytes = stable_diffusion_client.run(
+                            prompt=prompt,
+                        )
+                        self.image = pg.image.load(
+                            image_bytes, "assets/placeholder.svg"
+                        )
 
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)

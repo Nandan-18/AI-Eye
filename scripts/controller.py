@@ -3,8 +3,7 @@ from .dialogue import DialogueSystem
 from .scoring import Score
 from .ui import TextInput
 from .progress_bar import ProgressBar
-from .img_gen import ImageGen
-from clients import stable_diffusion
+from .img_gen import ImageGenerator
 
 
 class GameController:
@@ -14,8 +13,7 @@ class GameController:
         self.score = Score(self.round+1)
         self.timer = ProgressBar(200, 30, 60*20)
         self.text_input = TextInput((100, 100), "pizza")
-        self.img_gen_client = ImageGen()
-        #TODO: add a img generator class
+        self.img_gen_client = ImageGenerator()
 
     def update(self, events):
         self.dialouge_sys.update(events)

@@ -12,9 +12,6 @@ REPLICATE_API_KEY = os.getenv('REPLICATE_API_KEY')
 # replicate must be imported after load_dotenv
 import replicate
 
-# Example usage
-# stable_diffusion_client = StableDiffusionClient()
-# stable_diffusion_client.run("A cat holding a gameboy console")
 class StableDiffusionClient:
     def __init__(
         self,
@@ -26,6 +23,7 @@ class StableDiffusionClient:
         self.version = version
         self.api_token = REPLICATE_API_KEY
         self.image_dimensions = image_dimensions
+        self.session = requests.Session()
 
     def load_image(
         self,
@@ -38,7 +36,7 @@ class StableDiffusionClient:
             image_bytes = load_image(urls)
             image = pygame.image.load(image_bytes)
         """
-        response = requests.get(urls[0])
+        response = self.session.get(urls[0])
         image_bytes = io.BytesIO(response.content)
         return image_bytes
 
@@ -92,40 +90,6 @@ class StableDiffusionClient:
         prediction = self.start_process(prompt)
         image_bytes = self.poll_prediction(prediction)
         return image_bytes
-
-    # Not used
-    async def aload_image(
-        self,
-        urls: list,
-    ) -> BytesIO:
-        """
-        Loads image asynchronously
-
-        Example:
-            image_bytes = load_image(urls)
-            image = pygame.image.load(image_bytes)
-        """
-        response = httpx.get(urls[0])
-        image_bytes = io.BytesIO(response.content)
-        return image_bytes
-
-    # Not used
-    async def arun(
-        self, 
-        prompt: str,
-    ) -> BytesIO:
-        """
-        Runs Stable Diffusion asynchronously
-        """
-        replicate_client = replicate.Client(api_token=self.api_token)
-        replicate_model = f"{self.model}:{self.version}"
-        urls = replicate_client.run(
-            replicate_model,
-            input={"prompt": prompt, "image_dimensions": self.image_dimensions},
-        )
-        image_bytes = await self.aload_image(urls)
-        return image_bytes
-
 
 stable_diffusion_client = StableDiffusionClient()
 

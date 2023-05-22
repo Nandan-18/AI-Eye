@@ -9,12 +9,15 @@ import random
 class GameController:
     def __init__(self, win_size) -> None:
         self.win_size = win_size
-        self.round = -1
+        self.round = 0
         self.dialouge_sys = DialogueSystem()
         self.score = Score(self.round+1)
         self.timer = ProgressBar(200, 30, 60*20)
-        self.text_input = TextInput(self.win_size[1]*8/10, "pizza" , win_size)
         self.img_gen_client = ImageGenerator()
+        self.img_gen_client.round_img_gen(1)
+        self.cur_word = self.img_gen_client.get_cur_prompt()
+        print(f"prompt: {self.cur_word}")
+        self.text_input = TextInput(self.win_size[1]*8/10, self.cur_word , win_size)
 
         self.reset_timer = 0
 
@@ -33,6 +36,7 @@ class GameController:
 
     def to_ingame(self):
         self.dialouge_sys.visible = False
+        self.img_gen_client.visible = True
         self.text_input.visible =True
         self.timer.visible = True
         self.timer.reset_timer()
@@ -41,6 +45,7 @@ class GameController:
     def to_dialouges(self):
         self.cur_dialouge = 0
         self.dialouge_sys.reset()
+        self.img_gen_client.visible = False
         self.dialouge_sys.visible = True
         self.text_input.visible =False
         self.timer.visible = False
@@ -57,15 +62,19 @@ class GameController:
             self.reset_timer -= 1
         
         if self.reset_timer == 0:
-            self.text_input.reset_input(random.choice(["pizza", "dog", "monkey", "port"]))
             self.game_no += 1
+            new_prompt = self.img_gen_client.next_image()
+            print(f"prompt: {new_prompt}")
+            self.text_input.reset_input(new_prompt)
+            self.timer.reset_timer()
 
             
-
-        if self.text_input.is_correct_answer() and self.reset_timer == -1:
-            self.reset_timer = 30
+        if self.text_input.is_completed():
+            if self.text_input.is_correct_answer() and self.reset_timer == -1:
+                self.reset_timer = 30
             
 
+        self.img_gen_client.update(events, self.text_input.get_cur_word())
         for event in events:
             if not self.ingame:
         
@@ -81,11 +90,11 @@ class GameController:
 
         if self.game_no >= 5:
             self.round += 1
+            print(f"this is round {self.round+1}")
+            self.img_gen_client.round_img_gen(self.round+1)
             self.dialouges = [f"The round is over lets start round {self.round+1}"]
             self.to_dialouges()
 
-        # if self.text_input.
-        # self.img_gen_client.update(events, self.text_input.get_cur_word())
 
     def draw(self, win : pg.Surface):
         self.dialouge_sys.draw(win)

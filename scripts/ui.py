@@ -72,15 +72,15 @@ class Button(UI_Container):
 class TextInput:
     def __init__(self, height : int,  word_ans : str, win_size, visible : bool = False, box_size : int = 50, spacing : int = 10, ) -> None:
         self.height = height
-        self.word_ans = word_ans
-        self.length = len(word_ans)
         self.box_size = box_size
         self.spacing = spacing
         self.visible = visible
         self.win_size = win_size
-        self.pos = (self.win_size[0]//2 - (self.spacing+self.box_size)*self.length/2, self.height)
 
-        self.reset_input("pizza")
+        self.reset_input(word_ans)
+
+    def is_completed(self):
+        return self.length == len(self.get_cur_word())
 
     def get_cur_word(self):
         return "".join([box.letter for box in self.boxes])

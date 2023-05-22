@@ -9,7 +9,6 @@ from replicate.prediction import Prediction
 from dotenv import load_dotenv
 load_dotenv()
 REPLICATE_API_KEY = os.getenv('REPLICATE_API_KEY')
-
 # replicate must be imported after load_dotenv
 import replicate
 

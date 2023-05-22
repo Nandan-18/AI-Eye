@@ -4,19 +4,37 @@ import pygame as pg
 import threading
 from loguru import logger
 
+
 class ImageGenerator:
-    def __init__(self, image_dimensions: list = [512,512]) -> None:
+    def __init__(self, image_dimensions: list = [512, 512]) -> None:
         self.client = StableDiffusionClient(image_dimensions=image_dimensions)
         self.image = pg.Surface(tuple(image_dimensions), pg.SRCALPHA)
         # self.image.convert_alpha()
         # self.image.fill((0, 0, 0, 0))
         # Change this to change the style of art generated.
-        self.preprompt = "Isometic voxel art of "
+        self.preprompt = None
         self.has_generated_image = False
         self.image_dimensions = image_dimensions
-        self.word = FileUtils.get_random_word()
         self.image_gen_thread = None
-    
+        self.game_num = 0
+        self.round_images = []
+
+    def round_img_gen(self, round):
+        lengths = [3, 4, 5, 6, 7]
+        self.round_images = []
+        if round == 1:
+            self.preprompt = "simple, recognizable, clear voxel art of "
+        elif round == 2:
+            self.preprompt = "isometric, slighly blurred, voxel art of "
+        elif round == 3:
+            self.preprompt = "complex, unrecognizable voxel art of "
+
+        for length in lengths:
+            random_word = FileUtils.get_random_word(
+                str(length))  # Get a random word from the list
+            prompt = self.preprompt + random_word
+            self.round_images.append(self.generate_image(prompt))
+
     def update(self, events, user_input):
         """
         user_input = self.text_input.get_cur_word()
@@ -28,7 +46,8 @@ class ImageGenerator:
             if threading.active_count() == 1:
                 alert = "If this message occurs more than once in one round, shut down the program."
                 logger.debug(alert)
-                image_gen_thread = threading.Thread(target=self.generate_image, args=(prompt,))
+                image_gen_thread = threading.Thread(
+                    target=self.generate_image, args=(prompt,))
                 image_gen_thread.start()
         else:
             if user_input == self.word:
@@ -47,10 +66,11 @@ class ImageGenerator:
         logger.info("Image generated!")
         self.has_generated_image = True
 
-    def draw(self, win : pg.Surface):
+        return self.image
+
+    def draw(self, win: pg.Surface):
         pos = (
-            win.get_width()/2 - self.image.get_width()//2, 
+            win.get_width()/2 - self.image.get_width()//2,
             win.get_height()/3 - self.image.get_height()//2,
         )
-        win.blit(pg.transform.scale(self.image,self.image_dimensions), pos)
-
+        win.blit(pg.transform.scale(self.image, self.image_dimensions), pos)

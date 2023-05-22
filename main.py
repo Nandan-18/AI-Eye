@@ -62,20 +62,10 @@ class Game:
             mute_button.draw(self.win)
 
     def load(self):
-        self.game_conroller = controller.GameController()
-        # self.text_input = ui.TextInput((100, 100), "pizza")
-        # self.dialogue_sys = dialogue.DialogueSystem()
-        # self.progress_bar = progress_bar.ProgressBar(200, 30, 1000)
-        # self.score = scoring.Score(1)
-
-        self.image = pg.surface.Surface((512, 512))
-
-        # Still need to make this transparent
-        # self.image = pg.surface.Surface((512,512)).set_colorkey((0,0,0))
-        self.image = pg.surface.Surface((512, 512))
-
+        self.game_conroller = controller.GameController(self.win.get_size())
         pg.mixer.music.load('sounds/Suspense.mp3')
         pg.mixer.music.play(-1)
+
     def update(self):
         pg.display.update()
         self.clock.tick(self.fps)

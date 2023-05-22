@@ -2,8 +2,8 @@
 
 import os
 
-folder_name = "assets/robo_talking"
+folder_name = "assets/avatar_neutral"
 
 for file in os.listdir(folder_name):
-    if "reallllly_rough_animation-" in file:
+    if "neutral_left-" in file:
         os.rename(folder_name + "/"+file, folder_name + "/"+file.split("-")[-1][:-4] + ".png")

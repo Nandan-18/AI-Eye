@@ -3,6 +3,8 @@ from .dialogue import DialogueSystem
 from .scoring import Score
 from .ui import TextInput
 from .progress_bar import ProgressBar
+from .entities import Entity
+
 from .img_gen import ImageGenerator
 import random
 
@@ -17,6 +19,7 @@ class GameController:
         self.img_gen_client.round_img_gen(1)
         new_prompt = self.img_gen_client.get_cur_prompt()
         print(f"prompt: {new_prompt}")
+        self.img_gen_client.active = False
         self.text_input = TextInput(self.win_size[1]*8/10, new_prompt , win_size)
 
         self.reset_timer = 0
@@ -33,6 +36,10 @@ class GameController:
         self.cur_dialouge = 0
         self.game_no = 0
         self.ingame = False
+
+        self.ent_host = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/robo_host"],0.4, "robo_host")
+        self.ent_avatar = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/avatar_neutral"],0.4, "avatar_neutral")
+
 
     def to_ingame(self):
         self.dialouge_sys.visible = False
@@ -57,6 +64,10 @@ class GameController:
         self.dialouge_sys.update(events)
         self.timer.update()
         self.text_input.update(events)
+        if self.ingame:
+            self.ent_avatar.update(events)
+        else:
+            self.ent_host.update(events)
 
         if self.reset_timer >= 0:
             self.reset_timer -= 1
@@ -97,7 +108,12 @@ class GameController:
             self.to_dialouges()
 
 
+
     def draw(self, win : pg.Surface):
+        if self.ingame:
+            self.ent_avatar.draw(win)
+        else:
+            self.ent_host.draw(win)
         self.dialouge_sys.draw(win)
         self.score.draw(win)
         self.timer.draw(win, win.get_width() // 2 - self.timer.width // 2, win.get_height() - 50)

@@ -29,7 +29,10 @@ class Game:
 
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
-        pg.mixer.music.set_volume(0.5)
+
+        pg.mixer.music.set_volume(0.01)
+
+
 
         self.score = None
         self.progress_bar = None
@@ -71,6 +74,8 @@ class Game:
         self.game_conroller = controller.GameController(self.win.get_size())
         pg.mixer.music.load('sounds/Suspense.mp3')
         pg.mixer.music.play(-1)
+        pg.mixer.music.set_volume(0.1)
+
 
     def update(self):
         pg.display.update()

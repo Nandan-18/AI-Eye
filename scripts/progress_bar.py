@@ -1,4 +1,4 @@
-import pygame
+import pygame as pg
 
 
 class ProgressBar:
@@ -7,8 +7,8 @@ class ProgressBar:
         self.height = height
         self.countdown_time = countdown_time
         self.remaining_time = countdown_time
-        pygame.font.init()
-        self.font = pygame.font.Font('./font/Cascadia.ttf', 24)
+        pg.font.init()
+        self.font = pg.font.Font('./font/Cascadia.ttf', 24)
         self.is_complete = False
 
     def update(self):
@@ -18,17 +18,17 @@ class ProgressBar:
             self.is_complete = True
 
     def draw(self, surface, x, y):
-        pygame.draw.rect(surface, (235, 69, 95),
-                         (x, y, self.width, self.height), border_radius=10)
+        pg.draw.rect(surface, (13, 14, 46),
+                        (x, y, self.width, self.height), border_radius=10)
 
         progress_width = int(
-            (self.remaining_time / self.countdown_time) * (self.width - 4))
+            (1 - self.remaining_time / self.countdown_time) * (self.width - 4))
 
-        progress_rect = pygame.Rect(
+        progress_rect = pg.Rect(
             x + 2, y + 2, progress_width, self.height - 4)
 
-        pygame.draw.rect(surface, (235, 69, 95),
-                         progress_rect, border_radius=10)
+        pg.draw.rect(surface, (235, 69, 95),
+                        progress_rect, border_radius=10)
 
         text = self.font.render(
             str(round(int(self.remaining_time/6)*0.1, 2)), True, (235, 235, 235))
@@ -37,18 +37,20 @@ class ProgressBar:
 
         surface.blit(text, text_rect)
 
+
+
 #     def run(self):
-#         pygame.init()
-#         clock = pygame.time.Clock()
+#         pg.init()
+#         clock = pg.time.Clock()
 
 #         window_width = 400
 #         window_height = 200
-#         window = pygame.display.set_mode((window_width, window_height))
+#         window = pg.display.set_mode((window_width, window_height))
 
 #         while not self.is_complete:
-#             for event in pygame.event.get():
-#                 if event.type == pygame.QUIT:
-#                     pygame.quit()
+#             for event in pg.event.get():
+#                 if event.type == pg.QUIT:
+#                     pg.quit()
 #                     sys.exit()
 
 #             self.update()
@@ -57,7 +59,7 @@ class ProgressBar:
 #             window.fill((13, 14, 46))
 #             # Blit the progress bar surface onto the main window
 #             window.blit(self.surface, (window_width // 2 - self.width // 2, window_height // 2 - self.height // 2))
-#             pygame.display.flip()
+#             pg.display.flip()
 #             clock.tick(1)
 
 

@@ -86,7 +86,7 @@ class Game:
         if self.playing == True:
             self.text_input = ui.TextInput((100, 100), "", True)
             self.button = ui.Button((10, 10), (100, 50), "hey")
-            self.progress_bar = progress_bar.ProgressBar(200, 30, 1000)
+            self.progress_bar = progress_bar.ProgressBar(200, 30, 1200)
 
             # Still need to make this transparent
             # self.image = pg.surface.Surface((512,512)).set_colorkey((0,0,0))

@@ -115,7 +115,6 @@ class Game:
                     (event.w, event.h), pg.RESIZABLE)
 
             if self.playing == True:
-                self.progress_bar.update()
                 if self.has_generated_image == False:
                     prompt = self.preprompt + self.word
 
@@ -147,6 +146,7 @@ class Game:
                             image_bytes, "assets/placeholder.svg"
                         )
 
+        self.progress_bar.update()
         self.text_input.update(events)
         self.button.update(mouse_buttons, mouse_pos)
         self.dialogue_sys.update(events)

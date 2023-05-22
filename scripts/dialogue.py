@@ -22,6 +22,13 @@ class DialogueSystem:
         self.key_surf = pg.image.load("assets/X_Key_Dark.png")
         self.key_sound = pg.mixer.Sound("assets/chungu.wav") 
 
+    def reset(self):
+        self.talking = False
+        self.text = ""
+        self.frame_count = 0
+        self.frame_skip = 0
+        self.font_surf = None
+
     def start_talking(self, text, frame_skip : int ):
         self.talking = True
         self.text = text
@@ -51,6 +58,7 @@ class DialogueSystem:
                 self.host_icon.anim.set_state("robo_talking")
             else:
                 self.host_icon.anim.set_state("robo_idle")
+
 
     def wrap_text(self, text, font, width):
         """Wrap text to fit inside a given width when rendered.

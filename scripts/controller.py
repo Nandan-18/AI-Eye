@@ -15,9 +15,9 @@ class GameController:
         self.timer = ProgressBar(200, 30, 60*20)
         self.img_gen_client = ImageGenerator()
         self.img_gen_client.round_img_gen(1)
-        self.cur_word = self.img_gen_client.get_cur_prompt()
-        print(f"prompt: {self.cur_word}")
-        self.text_input = TextInput(self.win_size[1]*8/10, self.cur_word , win_size)
+        new_prompt = self.img_gen_client.get_cur_prompt()
+        print(f"prompt: {new_prompt}")
+        self.text_input = TextInput(self.win_size[1]*8/10, new_prompt , win_size)
 
         self.reset_timer = 0
 
@@ -91,7 +91,8 @@ class GameController:
         if self.game_no >= 5:
             self.round += 1
             print(f"this is round {self.round+1}")
-            self.img_gen_client.round_img_gen(self.round+1)
+            new_prompt = self.img_gen_client.round_img_gen(self.round+1)
+            self.text_input.reset_input(new_prompt)
             self.dialouges = [f"The round is over lets start round {self.round+1}"]
             self.to_dialouges()
 

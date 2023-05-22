@@ -40,6 +40,7 @@ class ImageGenerator:
             self.round_images.append(self.generate_image(prompt))
         
         self.game_num = 0
+        return self.prompts[self.game_num]
 
     def next_image(self):
         self.game_num = (self.game_num +1) % len(self.prompts)
@@ -52,20 +53,6 @@ class ImageGenerator:
         """
         user_input = self.text_input.get_cur_word()
         """
-        # if self.has_generated_image == False:
-        #     prompt = self.preprompt + self.word
-
-        #     # If there are no threads running, start a new one.
-        #     if threading.active_count() == 1:
-        #         alert = "If this message occurs more than once in one round, shut down the program."
-        #         logger.debug(alert)
-        #         image_gen_thread = threading.Thread(
-        #             target=self.generate_image, args=(prompt,))
-        #         image_gen_thread.start()
-        # else:
-        #     if user_input == self.word:
-        #         logger.debug("Correct!")
-        #         # self.image = pg.image.load("assets/correct_placeholder.jpeg")
         pass
 
     def generate_image(self, prompt):

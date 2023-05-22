@@ -14,10 +14,10 @@ class FileUtils:
     @classmethod
     def get_random_word(
         cls,
-        path: str = str(ROOT / "assets" / "words.json"),
-        category: str = "physical_objects",
+        length,
+        path: str = str(ROOT / "assets" / "final_words.json"),
     ) -> str:
         file_dict = cls.read_json(path)
-        return random.choice(file_dict[category])
+        return random.choice(file_dict[str(length)])
 
 

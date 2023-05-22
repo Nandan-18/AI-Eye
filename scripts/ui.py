@@ -70,22 +70,35 @@ class Button(UI_Container):
 
 
 class TextInput:
-    def __init__(self, pos : tuple,  word_ans : str, visible : bool = False, box_size : int = 50, spacing : int = 10, ) -> None:
-        self.pos = pos
+    def __init__(self, height : int,  word_ans : str, win_size, visible : bool = False, box_size : int = 50, spacing : int = 10, ) -> None:
+        self.height = height
         self.word_ans = word_ans
         self.length = len(word_ans)
         self.box_size = box_size
         self.spacing = spacing
-        self.shake = 0
-        self.frame_count = 0
         self.visible = visible
-        # current guess
-        self.boxes = [LetterBox(pos, i, box_size, spacing) for i in range(self.length)]
+        self.win_size = win_size
+        self.pos = (self.win_size[0]//2 - (self.spacing+self.box_size)*self.length/2, self.height)
 
-        self.cursor = 0
+        self.reset_input("pizza")
 
     def get_cur_word(self):
         return "".join([box.letter for box in self.boxes])
+
+    def is_correct_answer(self):
+        return self.get_cur_word() == self.word_ans
+    
+    def reset_input(self, new_word_ans : str):
+        self.word_ans = new_word_ans
+        self.length = len(self.word_ans)
+        self.pos = (self.win_size[0]//2 - (self.spacing+self.box_size)*self.length/2, self.height)
+        self.shake = 0
+        self.frame_count = 0
+        # current guess
+        self.boxes = [LetterBox(self.pos, i, self.box_size, self.spacing) for i in range(self.length)]
+
+        self.cursor = 0
+
 
     def update(self, events : list):
             if self.visible:
@@ -111,6 +124,7 @@ class TextInput:
                         self.boxes[self.cursor].delete_char()
                         if self.cursor != 0:
                             self.boxes[self.cursor-1].active = True
+
             
 
     def draw(self, win : pg.Surface):

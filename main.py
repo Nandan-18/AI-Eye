@@ -4,6 +4,9 @@ import pygame as pg
 import sys
 import os
 from scripts import entities, dialogue, ui, progress_bar, scoring, controller
+from clients.stable_diffusion import stable_diffusion_client
+from clients import utils
+import asyncio
 
 
 class Game:
@@ -16,6 +19,7 @@ class Game:
         self.win = pg.display.set_mode((w, h-30), pg.RESIZABLE)
         self.clock = pg.time.Clock()
         self.fps = 60
+        self.has_generated_image = False
 
         pg.display.set_caption("Game")
 
@@ -58,14 +62,7 @@ class Game:
             mute_button.draw(self.win)
 
     def load(self):
-        self.game_conroller = controller.GameController()
-        # self.text_input = ui.TextInput((100, 100), "pizza")
-        # self.dialogue_sys = dialogue.DialogueSystem()
-        # self.progress_bar = progress_bar.ProgressBar(200, 30, 1000)
-        # self.score = scoring.Score(1)
-
-        self.image = pg.surface.Surface((512, 512))
-
+        self.game_conroller = controller.GameController(self.win.get_size())
         pg.mixer.music.load('sounds/Suspense.mp3')
         pg.mixer.music.play(-1)
 

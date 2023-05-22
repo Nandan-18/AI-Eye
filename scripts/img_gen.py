@@ -90,3 +90,12 @@ class ImageGenerator:
                 win.get_height()/3 - self.image.get_height()//2,
             )
             win.blit(pg.transform.scale(self.round_images[self.game_num], self.image_dimensions), pos)
+             # Create a border around the image if image has been generated.
+            if self.has_generated_image == True:
+                # Isla, change the two variables below to change the border around the image
+                border_color = (0,0,0)
+                border_thickness = 50
+
+                pg.draw.rect(
+                    win, border_color, (*pos, *self.image_dimensions), border_thickness
+                )

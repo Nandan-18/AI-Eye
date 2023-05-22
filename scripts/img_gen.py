@@ -45,7 +45,7 @@ class ImageGenerator:
     def next_image(self):
         self.game_num = (self.game_num +1) % len(self.prompts)
         return self.prompts[self.game_num]
-
+    
     def get_cur_prompt(self):
         return self.prompts[self.game_num]
 
@@ -53,6 +53,7 @@ class ImageGenerator:
         """
         user_input = self.text_input.get_cur_word()
         """
+
         pass
 
     def generate_image(self, prompt):

@@ -21,24 +21,30 @@ class Game:
         self.fps = 60
         self.has_generated_image = False
 
+        self.bg_img = pg.image.load("assets/screen.png")
+
         pg.display.set_caption("Game")
 
         self.playing = False
 
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
+        pg.mixer.music.set_volume(0.5)
 
         self.score = None
         self.progress_bar = None
 
     def main_menu(self):
+        bg_img = pg.image.load("assets/Title_screen.png")
+        bg_img = pg.transform.scale(bg_img, self.win.get_size())
         start_button = ui.Button(
-            (self.win.get_width()//2-200, self.win.get_height()//2-25), (400, 50), "Start")
+            (self.win.get_width()//2-200, self.win.get_height()*3//5), (400, 50), "Start")
         mute_button = ui.Button(
-            (self.win.get_width()//2-50, self.win.get_height()//40),  (100, 50), "Mute")
+            (self.win.get_width()//2-50, self.win.get_height()*4//5),  (100, 50), "Mute")
         pg.mixer.music.load('sounds/JeopardyTypeBeat.mp3')
         pg.mixer.music.play(-1)
         menu_playing = True
+        
         while menu_playing:
             for event in pg.event.get():
                 if event.type == pg.QUIT:
@@ -57,7 +63,7 @@ class Game:
                 pg.mixer.music.stop()
 
             pg.display.update()
-            self.win.fill((250, 248, 246))
+            self.win.blit(bg_img, (0,0))
             start_button.draw(self.win)
             mute_button.draw(self.win)
 
@@ -85,7 +91,7 @@ class Game:
         self.game_conroller.update(events)
 
     def draw(self):
-        self.win.fill((0, 200, 200))
+        self.win.blit(self.bg_img, (0,0))
 
         self.game_conroller.draw(self.win)
 

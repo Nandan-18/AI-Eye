@@ -81,9 +81,9 @@ class ImageGenerator:
              # Create a border around the image if image has been generated.
             if self.has_generated_image == True:
                 # Isla, change the two variables below to change the border around the image
-                border_color = (0,0,0)
-                border_thickness = 50
+                border_color = (0,0,79)
+                border_thickness = 30
 
                 pg.draw.rect(
-                    win, border_color, (*pos, *self.image_dimensions), border_thickness
+                    win, border_color, (*pos, *self.image_dimensions), border_thickness, border_radius= 30
                 )

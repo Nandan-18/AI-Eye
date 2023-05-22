@@ -31,7 +31,7 @@ class ProgressBar:
                          progress_rect, border_radius=10)
 
         text = self.font.render(
-            str(self.remaining_time), True, (235, 235, 235))
+            str(round(int(self.remaining_time/6)*0.1, 2)), True, (235, 235, 235))
         text_rect = text.get_rect(
             center=(x + self.width // 2, y + self.height // 2))
 

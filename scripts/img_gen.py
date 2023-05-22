@@ -1,52 +1,56 @@
 from clients.stable_diffusion import StableDiffusionClient
 from clients.utils import FileUtils
 import pygame as pg
-import logging
+import threading
+from loguru import logger
 
-class ImageGen:
-    def __init__(self, size: tuple = (512,512)) -> None:
-        self.client = StableDiffusionClient(image_dimensions=size)
-        self.image = pg.Surface(size, pg.SRCALPHA)
-        self.image.convert_alpha()
-        self.image.fill((0, 0, 0, 0))
+class ImageGenerator:
+    def __init__(self, image_dimensions: list = [512,512]) -> None:
+        self.client = StableDiffusionClient(image_dimensions=image_dimensions)
+        self.image = pg.Surface(tuple(image_dimensions), pg.SRCALPHA)
+        # self.image.convert_alpha()
+        # self.image.fill((0, 0, 0, 0))
         # Change this to change the style of art generated.
         self.preprompt = "Isometic voxel art of "
         self.has_generated_image = False
-        self.size = size
+        self.image_dimensions = image_dimensions
         self.word = FileUtils.get_random_word()
-
+        self.image_gen_thread = None
     
     def update(self, events, user_input):
+        """
+        user_input = self.text_input.get_cur_word()
+        """
         if self.has_generated_image == False:
-                prompt = self.preprompt + self.word
+            prompt = self.preprompt + self.word
 
-                logging.info("Generating image...")
-                image_bytes = self.client.run(
-                    prompt=prompt,
-                )
-
-                # Pygame needs a name for the image file even if it's
-                # not going to be saved, so we just use a placeholder.
-                self.image = pg.image.load(
-                    image_bytes, "assets/placeholder.svg"
-                )
-                logging.info("Image generated!")
-                self.has_generated_image = True
+            # If there are no threads running, start a new one.
+            if threading.active_count() == 1:
+                alert = "If this message occurs more than once in one round, shut down the program."
+                logger.debug(alert)
+                image_gen_thread = threading.Thread(target=self.generate_image, args=(prompt,))
+                image_gen_thread.start()
         else:
             if user_input == self.word:
+                logger.debug("Correct!")
+                # self.image = pg.image.load("assets/correct_placeholder.jpeg")
 
-                # Add points to score
-                # Add success dialogue here
-
-                self.word = FileUtils.get_random_word()
-                prompt = self.preprompt + self.word
-                image_bytes = self.client.run(
-                    prompt=prompt,
-                )
-                self.image = pg.image.load(
-                    image_bytes, "assets/placeholder.svg"
-                )
+    def generate_image(self, prompt):
+        image_bytes = self.client.run(
+            prompt=prompt,
+        )
+        # Pygame needs a name for the image file even if it's
+        # not going to be saved, so we just use a placeholder.
+        self.image = pg.image.load(
+            image_bytes, "assets/placeholder.svg"
+        )
+        logger.info("Image generated!")
+        self.has_generated_image = True
 
     def draw(self, win : pg.Surface):
-        pos = (win.get_width()/2 - self.image.get_width()//2, win.get_height()/3 - self.image.get_height()//2)
-        win.blit(pg.transform.scale(self.image,self.size), pos)
+        pos = (
+            win.get_width()/2 - self.image.get_width()//2, 
+            win.get_height()/3 - self.image.get_height()//2,
+        )
+        win.blit(pg.transform.scale(self.image,self.image_dimensions), pos)
+

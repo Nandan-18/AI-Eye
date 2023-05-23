@@ -99,6 +99,10 @@ class GameController:
                         self.dialouge_sys.start_talking(self.dialouges[self.cur_dialouge], 3)
                         self.cur_dialouge += 1
 
+        if self.timer.is_complete:
+            self.score.game_update(2)
+            self.img_gen_client.next_image()
+            self.timer.reset_timer()
 
         if self.game_no >= 5:
             self.round += 1

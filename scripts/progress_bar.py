@@ -13,6 +13,7 @@ class ProgressBar:
         self.visible = False
 
     def reset_timer(self):
+        self.is_complete = False
         self.remaining_time = self.countdown_time
 
     def update(self):

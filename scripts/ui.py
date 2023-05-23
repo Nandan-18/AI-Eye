@@ -34,7 +34,7 @@ class UI_Container:
 
 
 class Button(UI_Container):
-    def __init__(self, pos: tuple = (0, 0), size: tuple = (0, 0), text="", surfs: tuple = None, visible=True, text_size=16, text_color= pg.color.Color(255,255,255), box_color= pg.Color(100, 0, 32), hover_color = pg.Color(60, 0, 32), clicked_color = pg.Color(200, 0, 32)) -> None:
+    def __init__(self, pos: tuple = (0, 0), size: tuple = (0, 0), text="",img=None, surfs: tuple = None, visible=True, text_size=16, text_color= pg.color.Color(255,255,255), box_color= pg.Color(100, 0, 32), hover_color = pg.Color(60, 0, 32), clicked_color = pg.Color(200, 0, 32)) -> None:
         super().__init__(pos, size, surfs, visible)
         self.size = size
         self.surf = pg.surface.Surface(size)
@@ -47,6 +47,7 @@ class Button(UI_Container):
         self.hover_color = hover_color
         self.box_color = box_color
         self.clicked_color = clicked_color
+        self.img = img
 
 
     def update(self, mouse_buttons: tuple, mouse_pos: tuple):
@@ -61,11 +62,16 @@ class Button(UI_Container):
                 color = self.box_color
             if self.clicked:
                 color = self.clicked_color
-            pg.draw.rect(win, color, self.rect)
+            if self.img:
+                win.blit(self.img, self.pos)
+            else:
+                pg.draw.rect(win, color, self.rect)
             if self.text:
                 text_surf = self.font.render(self.text, True, self.text_color)
                 text_pos =(self.pos[0] + (self.size[0]-text_surf.get_width())/2, self.pos[1]+ (self.size[1]-text_surf.get_height())/2)
                 win.blit(text_surf, text_pos)
+
+
 
 
 

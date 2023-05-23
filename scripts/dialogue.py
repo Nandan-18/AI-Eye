@@ -46,9 +46,9 @@ class DialogueSystem:
                     self.font_surf = self.render_text(self.text[:cur_letter_idx+1], self.font, 1000)
                     
                     if self.text[cur_letter_idx] in HARD_CONSONANTS:
-                        pg.mixer.music.set_volume(0.5)
+                        pg.mixer.music.set_volume(0.05)
                     if self.text[cur_letter_idx] in SOFT_CONSONANTS:
-                        pg.mixer.music.set_volume(0.3)
+                        pg.mixer.music.set_volume(0.03)
                         
                     self.key_sound.play()
 

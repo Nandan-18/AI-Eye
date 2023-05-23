@@ -36,6 +36,10 @@ class GameController:
         self.game_no = 0
         self.ingame = False
 
+        self.correct_sound = pg.mixer.Sound("assets/GoodAnswerDing.mp3")
+        self.wrong_sound = pg.mixer.Sound("assets/WrongAnswerShake.mp3")
+        self.time_over = pg.mixer.Sound("assets/Timer-Run-Out-Sound.mp3")
+
         self.ent_host = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/robo_host"],0.4, "robo_host")
         self.ent_avatar = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/avatar_neutral"],0.4, "avatar_neutral")
 
@@ -82,9 +86,11 @@ class GameController:
         if self.text_input.is_completed():
             if self.text_input.is_correct_answer() and self.reset_timer == -1:
                 self.reset_timer = 30
+                self.correct_sound.play()
                 self.score.game_update(0)
             if not self.text_input.is_correct_answer() and self.text_input.shake == 30:
                 self.score.game_update(1)
+                self.wrong_sound.play()
 
         self.img_gen_client.update(events, self.text_input.get_cur_word())
         for event in events:
@@ -100,6 +106,7 @@ class GameController:
                         self.cur_dialouge += 1
 
         if self.timer.is_complete:
+            self.time_over.play()
             self.score.game_update(2)
             self.img_gen_client.next_image()
             self.timer.reset_timer()

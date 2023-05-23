@@ -72,9 +72,6 @@ class Button(UI_Container):
                 win.blit(text_surf, text_pos)
 
 
-
-
-
 class TextInput:
     def __init__(self, height : int,  word_ans : str, win_size, visible : bool = False, box_size : int = 50, spacing : int = 10, ) -> None:
         self.height = height
@@ -82,6 +79,8 @@ class TextInput:
         self.spacing = spacing
         self.visible = visible
         self.win_size = win_size
+
+
 
         self.reset_input(word_ans)
 

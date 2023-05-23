@@ -25,6 +25,10 @@ class Score:
 
         screen.blit(self.coin_img, (10,10))
         screen.blit(score_text, (self.coin_img.get_width() + 20,  self.coin_img.get_height()//2-10))
+    
+    def reset_score(self):
+        self.score = 1000
+        self.round = 1
 
 # # Initialize Pygame
 # pygame.init()

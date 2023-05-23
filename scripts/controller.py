@@ -110,6 +110,10 @@ class GameController:
             self.score.game_update(2)
             self.img_gen_client.next_image()
             self.timer.reset_timer()
+        
+        if self.score.score <= 0:
+            self.score.reset_score()
+            return True
 
         if self.game_no >= 5:
             self.round += 1
@@ -119,6 +123,7 @@ class GameController:
             self.dialouges = [f"The round is over lets start round {self.round+1}"]
             self.to_dialouges()
 
+        return False
 
 
     def draw(self, win : pg.Surface):

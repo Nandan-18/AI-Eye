@@ -93,7 +93,10 @@ class Game:
                     (event.w, event.h), pg.RESIZABLE)
 
 
-        self.game_conroller.update(events)
+        end_game = self.game_conroller.update(events)
+        if end_game:
+            self.quit()
+
 
     def draw(self):
         self.win.blit(self.bg_img, (0,0))
@@ -103,8 +106,9 @@ class Game:
     def run(self):
         self.main_menu()
         self.load()
+        self.running = True
 
-        while True:
+        while self.running:
             self.update()
             self.draw()
             pg.display.update()

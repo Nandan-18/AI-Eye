@@ -34,7 +34,7 @@ class UI_Container:
 
 
 class Button(UI_Container):
-    def __init__(self, pos: tuple = (0, 0), size: tuple = (0, 0), text="",img=None, surfs: tuple = None, visible=True, text_size=16, text_color= pg.color.Color(255,255,255), box_color= pg.Color(100, 0, 32), hover_color = pg.Color(60, 0, 32), clicked_color = pg.Color(200, 0, 32)) -> None:
+    def __init__(self, pos: tuple = (0, 0), size: tuple = (0, 0), text="",img=None, surfs: tuple = None, visible=True, text_size=16, text_color= pg.color.Color(255,255,255), box_color= pg.Color(26, 55, 209), hover_color = pg.Color(150, 241, 255), clicked_color = pg.Color(101, 30, 127)) -> None:
         super().__init__(pos, size, surfs, visible)
         self.size = size
         self.surf = pg.surface.Surface(size)

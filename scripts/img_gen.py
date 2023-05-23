@@ -6,7 +6,7 @@ from loguru import logger
 
 
 class ImageGenerator:
-    def __init__(self, image_dimensions: list = [512, 512]) -> None:
+    def __init__(self, image_dimensions: list = [512, 512], active : bool = False) -> None:
         self.client = StableDiffusionClient(image_dimensions=image_dimensions)
         self.image = pg.Surface(tuple(image_dimensions), pg.SRCALPHA)
         # self.image.convert_alpha()
@@ -20,7 +20,7 @@ class ImageGenerator:
         self.round_images = []
         self.prompts = []
         self.visible = False
-        self.active = False
+        self.active = active
 
     def round_img_gen(self, round):
         if self.active:

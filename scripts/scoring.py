@@ -1,52 +1,30 @@
-import pygame
+import pygame as pg
 
 
 class Score:
     def __init__(self, round):
         self.score = 1000
         self.round = round
-        self.round_score = 0
-        self.hint = False
-        self.score_font = pygame.font.Font('./font/Cascadia.ttf', 32)
+        self.score_font = pg.font.Font('./font/Cascadia.ttf', 32)
+        self.coin_img = pg.image.load("assets/coin.png")
+        self.coin_img = pg.transform.scale(self.coin_img, (50,50))
 
-    def hint_update(self):
-        if self.hint:
-            self.score -= 100
-            self.hint = False
-        return self.score
 
-    def round_update(self, correct):
+    def game_update(self, correct):
         if correct == 0:
-            self.round_score += 100  # Correct answer
+            self.score += 100  # Correct answer
         elif correct == 1:
-            self.round_score -= 150  # Wrong answer
+            self.score -= 150  # Wrong answer
         elif correct == 2:
-            self.round_score -= 200  # Time runs out
+            self.score -= 200  # Time runs out
 
     def draw(self, screen):
+
         score_text = self.score_font.render(
-            f"Score: {self.score}", True, (255, 255, 255))
-        round_text = self.score_font.render(
-            f"Round: {self.round}", True, (255, 255, 255))
-        round_score_text = self.score_font.render(
-            f"Round Score: {self.round_score}", True, (255, 255, 255))
-        hint_text = self.score_font.render(
-            "Hint", True, (255, 255, 255))
+            f"{self.score}", True, (255, 255, 255))
 
-        screen.blit(score_text, (10, 10))
-        screen.blit(round_text, (10, 50))
-        # screen.blit(round_score_text, (10, 90))
-
-        hint_button = pygame.Rect(10, 130, 100, 50)
-        pygame.draw.rect(screen, (0, 255, 0), hint_button)
-        screen.blit(hint_text, (20, 140))
-
-        mouse_pos = pygame.mouse.get_pos()
-        if hint_button.collidepoint(mouse_pos):
-            pygame.draw.rect(screen, (0, 200, 0), hint_button, 3)
-            if pygame.mouse.get_pressed()[0]:
-                self.hint = True
-                self.score = self.hint_update()
+        screen.blit(self.coin_img, (10,10))
+        screen.blit(score_text, (self.coin_img.get_width() + 20,  self.coin_img.get_height()//2-10))
 
 # # Initialize Pygame
 # pygame.init()

@@ -7,7 +7,7 @@ class Animator:
         self.images_filenames = {folder : sorted([file for file in os.listdir(folder)], key=lambda x : int(x[:-4])) for folder in states}
 
         self.images = {folder.split("/")[-1] :[pg.image.load(os.path.join(folder, filename)) for filename in filenames] for folder, filenames in self.images_filenames.items()}
-        self.images = {state :[pg.transform.smoothscale_by(img, 0.2) for img in imgs] for state, imgs in self.images.items()}
+        self.images = {state :[pg.transform.smoothscale_by(img, scale) for img in imgs] for state, imgs in self.images.items()}
         self.cur_state = init_state
         self.duration = duration # in frames not seconds
 

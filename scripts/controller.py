@@ -15,7 +15,7 @@ class GameController:
         self.dialouge_sys = DialogueSystem()
         self.score = Score(self.round+1)
         self.timer = ProgressBar(200, 30, 60*20)
-        self.img_gen_client = ImageGenerator(active=True)
+        self.img_gen_client = ImageGenerator(active=False)
         self.img_gen_client.round_img_gen(1)
         new_prompt = self.img_gen_client.get_cur_prompt()
         print(f"prompt: {new_prompt}")
@@ -40,8 +40,8 @@ class GameController:
         self.wrong_sound = pg.mixer.Sound("assets/WrongAnswerShake.mp3")
         self.time_over = pg.mixer.Sound("assets/Timer-Run-Out-Sound.mp3")
 
-        self.ent_host = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/robo_host"],0.4, "robo_host")
-        self.ent_avatar = Entity((win_size[0]*4//5-30, win_size[1]//5),["assets/avatar_neutral"],0.4, "avatar_neutral")
+        self.ent_host = Entity((win_size[0]*4//6-30, 0),["assets/robo_host"],0.3, "robo_host")
+        self.ent_avatar = Entity((win_size[0]*4//6-30, 30),["assets/avatar_neutral"],0.3, "avatar_neutral")
 
 
     def to_ingame(self):

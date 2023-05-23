@@ -15,7 +15,7 @@ class GameController:
         self.dialouge_sys = DialogueSystem()
         self.score = Score(self.round+1)
         self.timer = ProgressBar(200, 30, 60*20)
-        self.img_gen_client = ImageGenerator(active=False)
+        self.img_gen_client = ImageGenerator(active=True)
         self.img_gen_client.round_img_gen(1)
         new_prompt = self.img_gen_client.get_cur_prompt()
         print(f"prompt: {new_prompt}")
@@ -102,7 +102,7 @@ class GameController:
                         self.ingame = True
                         self.to_ingame()
                     else:
-                        self.dialouge_sys.start_talking(self.dialouges[self.cur_dialouge], 3)
+                        self.dialouge_sys.start_talking(self.dialouges[self.cur_dialouge], 2)
                         self.cur_dialouge += 1
 
         if self.timer.is_complete:

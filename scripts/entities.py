@@ -2,9 +2,9 @@ import pygame as pg
 from .animator import Animator
 
 class Entity:
-    def __init__(self, pos, folders, scale, init_state) -> None:
+    def __init__(self, pos, folders, scale, init_state, dur=5) -> None:
         self.pos = pos
-        self.anim = Animator(folders, 5, scale, init_state)
+        self.anim = Animator(folders, dur, scale, init_state)
     
     def update(self, events):
         self.anim.update()

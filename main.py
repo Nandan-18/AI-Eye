@@ -74,7 +74,7 @@ class Game:
         self.game_conroller = controller.GameController(self.win.get_size())
         pg.mixer.music.load('sounds/Suspense.mp3')
         pg.mixer.music.play(-1)
-        pg.mixer.music.set_volume(0.1)
+        pg.mixer.music.set_volume(0.2)
 
 
     def update(self):

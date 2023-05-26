@@ -5,6 +5,7 @@ import io
 from io import BytesIO
 import pygame as pygame
 from replicate.prediction import Prediction
+import threading
 
 from dotenv import load_dotenv
 load_dotenv()
@@ -17,7 +18,7 @@ class StableDiffusionClient:
         self,
         model: str = "stability-ai/stable-diffusion",
         version: str = "27b93a2413e7f36cd83da926f3656280b2931564ff050bf9575f1fdf9bcd7478",
-        image_dimensions: list = [512, 512],
+        image_dimensions: list = [128, 128],
     ):
         self.model = model
         self.version = version
@@ -61,24 +62,26 @@ class StableDiffusionClient:
         version = model.versions.get(self.version)
         prediction = replicate_client.predictions.create(
             version=version,
-            input={"prompt": prompt, "image_dimensions": self.image_dimensions},
+            input={"prompt": prompt, "image_dimensions": self.image_dimensions, "num_inference_steps": 10, "guidance_scale" : 3},
         ) 
         return prediction
     
-    def poll_prediction(
-        self,
-        prediction: Prediction,
-    ) -> BytesIO:
-        """
-        Polls a Prediction object for status.
-        Returns a BytesIO object, which can be loaded into pygame.
-        """
-        while prediction.status != "succeeded":
-            # https://www.pygame.org/docs/ref/event.html#pygame.event.wait
-            # Must call pygame.event.wait() to prevent pygame from freezing
-            pygame.event.wait()
-            # Here we wait 0.5sec then poll the prediction for status
-            prediction.wait()
+    def poll_prediction(self, prediction: Prediction, prompt : str) -> BytesIO:
+        event = threading.Event()
+
+        def poll(prediction):
+            while prediction.status != "succeeded":
+                prediction.wait()
+                if prediction.status == "Failed" or prediction.status == "failed":
+                    print(f"Failed: {prompt}")
+                    prediction = self.start_process(prompt)
+            event.set()
+
+        threading.Thread(target=poll, daemon=True, args=(prediction,)).start()
+        # poll(prediction)
+
+        event.wait()  # Wait for the prediction to finish
+
         urls = prediction.output
         image_bytes = self.load_image(urls)
         return image_bytes
@@ -88,7 +91,7 @@ class StableDiffusionClient:
         prompt: str,
     ) -> BytesIO:
         prediction = self.start_process(prompt)
-        image_bytes = self.poll_prediction(prediction)
+        image_bytes = self.poll_prediction(prediction, prompt)
         return image_bytes
 
 stable_diffusion_client = StableDiffusionClient()

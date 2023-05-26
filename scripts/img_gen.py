@@ -22,27 +22,41 @@ class ImageGenerator:
         self.visible = False
         self.active = active
 
+    def gen_prompt(self, length, round):
+        if round == 1:
+            self.preprompt = "cartoon image of "
+        elif round == 2:
+            self.preprompt = "cyberpunk "
+        elif round == 3:
+            self.preprompt = "voxel "
+        random_word = FileUtils.get_random_word(str(length))  # Get a random word from the list
+        self.prompt = self.preprompt + random_word
+        return random_word, self.prompt
+
     def round_img_gen(self, round):
         if self.active:
             lengths = [3, 4, 5, 6, 7]
-            self.round_images = []
             self.prompts = []
-            if round == 1:
-                self.preprompt = "voxel art of "
-            elif round == 2:
-                self.preprompt = " abstract art of "
-            elif round == 3:
-                self.preprompt = "complex voxel art of "
 
-            for length in lengths:
-                random_word = FileUtils.get_random_word(
-                    str(length))  # Get a random word from the list
-                prompt = self.preprompt + random_word
-                self.prompts.append(random_word)
-                self.round_images.append(self.generate_image(prompt))
+
+            self.round_images = [ None for i in range(5)]
+
+            for i, length in enumerate(lengths):
+                word, prompt = self.gen_prompt(length, round)
+                self.round_images[i] = threading.Thread(target=self.generate_image, args=(prompt,i,)) 
+                self.prompts.append(word)
+                self.round_images[i].start()
+
+            for thread in self.round_images:
+                if not isinstance(thread, pg.Surface):
+                    thread.join()
             
             self.game_num = 0
             return self.prompts[self.game_num]
+    
+    # def skip_game(self, round):
+    #     if round == 5:
+    #         self.
 
     def next_image(self):
         if self.active:
@@ -65,7 +79,7 @@ class ImageGenerator:
 
         pass
 
-    def generate_image(self, prompt):
+    def generate_image(self, prompt, i):
         logger.info(f"UPDATE: starting processing for {prompt.split(' ')[-1]}!")
         image_bytes = self.client.run(
             prompt=prompt,
@@ -78,7 +92,7 @@ class ImageGenerator:
         logger.info(f"Image generated for {prompt}!")
         self.has_generated_image = True
 
-        return self.image
+        self.round_images[i] = self.image
 
     def draw(self, win: pg.Surface):
         if self.visible and self.active:
@@ -86,7 +100,9 @@ class ImageGenerator:
                 win.get_width()/2 - self.image.get_width()//2,
                 win.get_height()/3 - self.image.get_height()//2,
             )
-            win.blit(pg.transform.scale(self.round_images[self.game_num], self.image_dimensions), pos)
+            # print(self.round_images[self.game_num].get_size())
+            if isinstance(self.round_images[self.game_num], pg.Surface):
+                win.blit(pg.transform.scale(self.round_images[self.game_num], self.image_dimensions), pos)
              # Create a border around the image if image has been generated.
             if self.has_generated_image == True:
                 # Isla, change the two variables below to change the border around the image

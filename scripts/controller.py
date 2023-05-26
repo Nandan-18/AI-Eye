@@ -15,7 +15,7 @@ class GameController:
         self.dialouge_sys = DialogueSystem()
         self.score = Score(self.round+1)
         self.timer = ProgressBar(200, 30, 60*20)
-        self.img_gen_client = ImageGenerator(active=True)
+        self.img_gen_client = ImageGenerator(active=True, image_dimensions=[512, 512])
         self.img_gen_client.round_img_gen(1)
         new_prompt = self.img_gen_client.get_cur_prompt()
         print(f"prompt: {new_prompt}")
@@ -108,7 +108,9 @@ class GameController:
         if self.timer.is_complete:
             self.time_over.play()
             self.score.game_update(2)
-            self.img_gen_client.next_image()
+            new_prompt = self.img_gen_client.next_image()
+            self.text_input.reset_input(new_prompt)
+            self.game_no += 1
             self.timer.reset_timer()
         
         if self.score.score <= 0:

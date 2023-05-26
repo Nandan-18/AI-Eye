@@ -30,7 +30,7 @@ class Game:
         self.click = pg.mixer.Sound("sounds/Click.mp3")
         self.wrong_answer = pg.mixer.Sound("sounds/WrongAnswerShake.mp3")
 
-        pg.mixer.music.set_volume(0.01)
+        pg.mixer.music.set_volume(0.2)
 
 
 
